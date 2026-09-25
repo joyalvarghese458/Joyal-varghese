@@ -1,8 +1,9 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-// Static portfolio. Update `site` to the real deploy URL when known.
+// Default is the portfolio address supplied in Joyal's resume.
+// Override SITE_URL when deploying on a different domain.
 export default defineConfig({
-  site: 'https://ashwin-kv.example.com',
+  site: process.env.SITE_URL || 'https://joyal.myportfoliowebsite.com',
   trailingSlash: 'ignore',
 });

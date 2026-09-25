@@ -209,7 +209,7 @@ export default defineConfig({
       // ── blogLinks ────────────────────────────────────────────────────────
       {
         name: 'blogLinks',
-        label: 'Blog Posts',
+        label: 'External Blog Links',
         path: 'src/content/blog-links',
         format: 'json',
         fields: [
@@ -224,6 +224,20 @@ export default defineConfig({
       },
 
       // ── gallery ──────────────────────────────────────────────────────────
+      {
+        name: 'blog',
+        label: 'Mini Blog Articles',
+        path: 'src/content/blog',
+        format: 'md',
+        fields: [
+          { type: 'string', name: 'title', label: 'Title', required: true },
+          { type: 'string', name: 'description', label: 'SEO description / excerpt', required: true, ui: { component: 'textarea' } },
+          { type: 'string', name: 'date', label: 'Publish date (YYYY-MM-DD)', required: true },
+          { type: 'string', name: 'tag', label: 'Topic', required: true },
+          { type: 'boolean', name: 'featured', label: 'Featured article' },
+          { type: 'rich-text', name: 'body', label: 'Article', isBody: true },
+        ],
+      },
       {
         name: 'gallery',
         label: 'Gallery',

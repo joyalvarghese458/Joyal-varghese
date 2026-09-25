@@ -17,7 +17,7 @@ const projects = allProjects.sort((a, b) => a.data.order - b.data.order);
 const rots = [-0.6, 0.5, -0.4, 0.6, -0.3, 0.4];
 ---
 
-<Base title="Projects · Ashwin KV" description="All projects by Ashwin KV.">
+<Base title="Projects · Joyal Varghese" description="All projects by Joyal Varghese.">
   <GridPaper size={22} style="min-height: 100vh;">
 
     {/* ── Page header ── */}
@@ -30,13 +30,13 @@ const rots = [-0.6, 0.5, -0.4, 0.6, -0.3, 0.4];
           Projects.
         </Marker>
       </div>
-      <Mono size={9} class="header-tag">ashwin.kv</Mono>
+      <Mono size={9} class="header-tag">joyal.varghese</Mono>
     </header>
 
     {/* ── Body ── */}
     <div class="page-body">
       <Hand size={19} color={NB.inkSoft} as="p" class="intro-line">
-        Things I've built: real-time collaboration tools, e-commerce, tax automation, ed-tech.
+        Things I've built: ERP systems, business tools, e-commerce, and portfolio experiences.
       </Hand>
 
       {/* ── Projects grid ── */}
@@ -164,12 +164,13 @@ const rots = [-0.6, 0.5, -0.4, 0.6, -0.3, 0.4];
   }
   .card-top-row {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: baseline;
     gap: 8px;
   }
   .card-title { line-height: 1.1; }
-  .card-tag { flex-shrink: 0; }
+  .card-tag { max-width: 100%; overflow-wrap: anywhere; }
   .card-desc {
     display: block;
     margin-top: 4px;

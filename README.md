@@ -1,4 +1,4 @@
-# Ashwin KV Portfolio
+# Joyal Varghese Portfolio
 
 A notebook-style personal portfolio. Built with **Astro** (static site) and
 content editable through **TinaCMS** (no-code web dashboard, git-backed).
@@ -79,9 +79,9 @@ Each push, or each save in the Tina dashboard, auto-rebuilds and redeploys.
 
 ## Notes
 
-- All text/photos are placeholders from the design. Swap in real content via
-  the files or the CMS.
+- Content is personalized from Joyal's resume and LinkedIn details. See
+  `docs/PERSONALIZATION.md` for remaining photos and links to add.
 - `photo` fields are `null` → striped placeholder shown. Add an image path
   (file in `public/`) to replace.
-- Blog entries are **external links** (open in a new tab); this site lists
-  them, it does not host blog posts.
+- Mini blogs are hosted as Markdown articles in `src/content/blog/`, alongside
+  optional external links. See `docs/SEO.md` for publishing and domain setup.

@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getBlogPosts } from '../lib/blog';
 import Base from '../layouts/Base.astro';
 import GridPaper from '../components/GridPaper.astro';
 import Hand from '../components/Hand.astro';
@@ -26,7 +26,7 @@ function formatDateShort(iso: string): string {
 }
 
 // ── Data ──────────────────────────────────────────────────────────────────
-const allPosts = await getCollection('blogLinks');
+const allPosts = await getBlogPosts();
 
 // Sort newest first
 const sorted = allPosts.sort((a, b) =>
@@ -49,7 +49,7 @@ const chipRots = [-1, 1, -0.5, 1, -1, 0.5, -0.8, 0.6, -0.4, 0.9];
 const featured = featuredEntry?.data;
 ---
 
-<Base title="Blog · Ashwin KV" description="Notes I write to myself, mostly. About code, design, and shipping.">
+<Base title="UAE Software Development Blog | Joyal Varghese" description="Short notes from Joyal Varghese on full stack development in the UAE, ERP workflows, React interfaces and choosing a software developer.">
   <GridPaper size={22} class="blog-root">
 
     {/* ─── Header ─── */}
@@ -60,14 +60,15 @@ const featured = featuredEntry?.data;
         </HandLink>
         <Marker size="clamp(36px, 7vw, 60px)" as="h1" style="display:block; margin-top:2px;">Blog.</Marker>
       </div>
-      <Mono size={9} class="detail-header-tag">ashwin.kv</Mono>
+      <Mono size={9} class="detail-header-tag">joyal.varghese</Mono>
     </header>
 
     {/* ─── Content ─── */}
     <div class="blog-body">
+      {allPosts.length === 0 && <Hand size={24} as="p">New writing will appear here.</Hand>}
 
       <Hand size={19} color={NB.inkSoft} as="p" class="blog-intro">
-        Notes I write to myself, mostly. About code, design, and shipping.
+        Notes from a full stack developer in the UAE. Business workflows, thoughtful interfaces, and the details behind useful software.
       </Hand>
 
       {/* ─── Tag chips ─── */}
@@ -102,7 +103,7 @@ const featured = featuredEntry?.data;
               <Mono size={9}>#{featured.tag}</Mono>
               <Mono size={9} color={NB.pencil}>{featured.readMinutes} min read</Mono>
             </div>
-            <HandLink href={featuredEntry.data.url} target="_blank" rel="noopener noreferrer" class="featured-title-link">
+            <HandLink href={featuredEntry.data.url} target={featuredEntry.data.url.startsWith('/') ? undefined : '_blank'} rel={featuredEntry.data.url.startsWith('/') ? undefined : 'noopener noreferrer'} class="featured-title-link">
               <Hand size="clamp(22px, 4vw, 36px)" weight={600} as="h2" class="featured-title">
                 {featured.title}
               </Hand>
@@ -128,7 +129,7 @@ const featured = featuredEntry?.data;
               <Mono size={9} class="post-date post-date--long">{formatDateLong(p.data.date)}</Mono>
               <Mono size={9} class="post-date post-date--short">{formatDateShort(p.data.date)}</Mono>
               <div class="post-content">
-                <HandLink href={p.data.url} target="_blank" rel="noopener noreferrer">
+                <HandLink href={p.data.url} target={p.data.url.startsWith('/') ? undefined : '_blank'} rel={p.data.url.startsWith('/') ? undefined : 'noopener noreferrer'}>
                   <Hand size="clamp(18px, 3vw, 24px)" weight={600}>{p.data.title}</Hand>
                 </HandLink>
                 <div class="post-sub">

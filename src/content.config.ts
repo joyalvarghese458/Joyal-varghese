@@ -135,7 +135,19 @@ const gallery = defineCollection({
   }),
 });
 
+const blog = defineCollection({
+  loader: glob({ pattern: '*.md', base: 'src/content/blog' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    tag: z.string(),
+    featured: z.boolean().default(false),
+  }),
+});
+
 export const collections = {
+  blog,
   profile,
   experience,
   education,

@@ -1,0 +1,72 @@
+{
+  "name": "Ashwin KV",
+  "firstName": "Ashwin",
+  "greeting": "hi, I'm",
+  "tagline": [
+    {
+      "text": "a ",
+      "highlight": ""
+    },
+    {
+      "text": "senior frontend engineer",
+      "highlight": "yellow"
+    },
+    {
+      "text": " & ",
+      "highlight": ""
+    },
+    {
+      "text": "co-founder at Octane Innovations",
+      "highlight": "pink"
+    },
+    {
+      "text": ", building for the web.",
+      "highlight": ""
+    }
+  ],
+  "status": "open to new opportunities · building allocat",
+  "photo": "/media/ChatGPT Image May 20, 2026, 01_04_32 AM.png",
+  "photoCaption": "that's me, says hi",
+  "tags": [
+    "co-founder",
+"frontend",
+"javascript",
+    "full-stack",
+    "react",
+"next.js",
+    "typescript",
+    "node"
+  ],
+  "bio": "I write code for the web, mostly frontend, often the whole stack. I've built real-time collaboration tools, e-commerce from scratch, tax automation for UAE businesses, and live-streamed classrooms. Now I'm co-founding Octane Innovations. I care about fast pages, calm interfaces, and details that make people smile.",
+  "contacts": [
+    {
+      "icon": "✉",
+      "label": "ashwinkv.akv@gmail.com",
+      "url": "mailto:ashwinkv.akv@gmail.com",
+      "sub": "email",
+      "color": "yellow"
+    },
+    {
+      "icon": "GH",
+      "label": "github.com/dreamographer",
+      "url": "https://github.com/dreamographer",
+      "sub": "code",
+      "color": "pink"
+    },
+    {
+      "icon": "in",
+      "label": "linkedin.com/in/ashwin-kv",
+      "url": "https://www.linkedin.com/in/ashwin-kv/",
+      "sub": "work",
+      "color": "blue"
+    },
+    {
+      "icon": "𝕏",
+      "label": "@Dreamographer_",
+      "url": "https://x.com/Dreamographer_",
+      "sub": "thoughts",
+      "color": "green"
+    }
+  ],
+  "footerNote": "© 2026 ashwin kv, built by hand, scribbled with love."
+}

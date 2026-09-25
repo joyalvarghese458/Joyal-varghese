@@ -162,90 +162,60 @@ html.js [data-reveal].is-revealed {
   html.js [data-reveal] { opacity: 1; transform: none; transition: none; }
 }
 
-/* ---------- Wavy page-flip overlay (book page turn) ----------
-   The script in Base.astro clones the outgoing page into vertical strips.
-   Each strip turns on the shared spine (left edge) with a staggered delay,
-   so the sheet bends and a curl ripples across it like real paper,
-   instead of one rigid plane rotating. */
-.nb-flip-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  pointer-events: none;
-  overflow: hidden;
-  /* 3D scene; vanishing point at the spine */
-  perspective: 1700px;
+/* Browser snapshots preserve the fully styled page across the DOM swap. */
+html[data-astro-transition] { scroll-behavior: auto; }
+
+::view-transition-group(root) { animation-duration: 580ms; }
+::view-transition-image-pair(root) {
+  perspective: 1800px;
   perspective-origin: left center;
+  isolation: isolate;
 }
-
-.nb-flip-strip {
-  position: absolute;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
+::view-transition-old(root),
+::view-transition-new(root) {
+  height: 100%;
+  object-fit: none;
+  object-position: top left;
+  mix-blend-mode: normal;
   backface-visibility: hidden;
-  transform-style: preserve-3d;
-  will-change: transform;
+  transform-origin: left center;
+  animation: none;
+}
+::view-transition-old(root) {
+  z-index: 2;
+  animation: nb-page-turn-out 580ms cubic-bezier(.32, .08, .2, 1) both;
+}
+::view-transition-new(root) { z-index: 1; }
+html[data-astro-transition="back"]::view-transition-old(root) {
   z-index: 1;
-  /* transform-origin + animation-delay are set per-strip inline */
-  animation: nb-flip-strip 0.66s cubic-bezier(0.42, 0.04, 0.22, 1) forwards;
+  animation: none;
+}
+html[data-astro-transition="back"]::view-transition-new(root) {
+  z-index: 2;
+  animation: nb-page-turn-in 580ms cubic-bezier(.32, .08, .2, 1) both;
+}
+@keyframes nb-page-turn-out {
+  from { transform: rotateY(0deg); opacity: 1; }
+  to { transform: rotateY(-100deg); opacity: 0; }
+}
+@keyframes nb-page-turn-in {
+  from { transform: rotateY(-100deg); opacity: 0; }
+  to { transform: rotateY(0deg); opacity: 1; }
 }
 
-/* Back navigation: a static snapshot of the page being left, sitting
-   under the strips while the destination page folds in over it. */
-.nb-flip-backdrop {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  z-index: 0;
+/* A short fade for browsers without native view-transition snapshots. */
+html[data-astro-transition-fallback="old"] main {
+  animation: nb-route-fade-out 120ms ease-out both;
 }
-
-/* The cloned page slice, positioned so each strip shows its own column. */
-.nb-flip-page {
-  position: absolute;
-  top: 0;
+html[data-astro-transition-fallback="new"] main {
+  animation: nb-route-fade-in 180ms ease-out both;
 }
-
-/* Per-strip shading: darkens as the strip turns edge-on; staggered with
-   the strip, so light rakes across the curl. */
-.nb-flip-shade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    104deg,
-    rgba(255, 255, 255, 0.22) 0%,
-    rgba(255, 255, 255, 0) 16%,
-    rgba(0, 0, 0, 0.1) 52%,
-    rgba(0, 0, 0, 0.46) 100%
-  );
-  opacity: 0;
-  animation: nb-flip-shade 0.66s cubic-bezier(0.42, 0.04, 0.22, 1) forwards;
-}
-
-/* Forward: the page curls away from flat. */
-@keyframes nb-flip-strip {
-  0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(-124deg); }
-}
-@keyframes nb-flip-shade {
-  0%   { opacity: 0; }
-  50%  { opacity: 0.5; }
-  100% { opacity: 0.9; }
-}
-
-/* Back: the destination page un-curls, folding down into place. */
-.nb-flip-overlay--back .nb-flip-strip { animation-name: nb-flip-strip-back; }
-.nb-flip-overlay--back .nb-flip-shade { animation-name: nb-flip-shade-back; }
-@keyframes nb-flip-strip-back {
-  0%   { transform: rotateY(-124deg); }
-  100% { transform: rotateY(0deg); }
-}
-@keyframes nb-flip-shade-back {
-  0%   { opacity: 0.9; }
-  50%  { opacity: 0.5; }
-  100% { opacity: 0; }
-}
+@keyframes nb-route-fade-out { to { opacity: 0; } }
+@keyframes nb-route-fade-in { from { opacity: 0; } to { opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .nb-flip-overlay { display: none; }
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  html[data-astro-transition-fallback] main { animation: none !important; }
 }

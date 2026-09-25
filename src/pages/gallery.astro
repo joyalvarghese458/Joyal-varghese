@@ -30,7 +30,7 @@ const viewerData = items
   .map((it) => ({ src: it.data.image as string, label: it.data.label }));
 ---
 
-<Base title="Gallery · Ashwin KV" description="Photos, screenshots, sketches. A pinboard of stuff I like.">
+<Base title="Gallery · Joyal Varghese" description="A space for photos, screenshots, and sketches." noindex={items.length === 0}>
   <GridPaper size={22} class="gallery-root">
 
     {/* ─── Header ─── */}
@@ -41,13 +41,14 @@ const viewerData = items
         </HandLink>
         <Marker size="clamp(36px, 7vw, 60px)" as="h1" style="display:block; margin-top:2px;">Gallery.</Marker>
       </div>
-      <Mono size={9} class="detail-header-tag">ashwin.kv</Mono>
+      <Mono size={9} class="detail-header-tag">joyal.varghese</Mono>
     </header>
 
     {/* ─── Content ─── */}
     <div class="gallery-body">
+      {rawItems.length === 0 && <Hand size={24} as="p">New photos will appear here.</Hand>}
       <Hand size={19} color={NB.inkSoft} as="p" class="gallery-intro">
-        Photos, screenshots, sketches. A pinboard of stuff I like.
+        A space for photos, screenshots, and sketches.
       </Hand>
 
       {/* ─── Mobile grid (2-col) ─── */}

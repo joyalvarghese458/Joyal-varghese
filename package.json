@@ -1,7 +1,7 @@
 {
   "name": "portfolio-simple",
   "version": "1.0.0",
-  "description": "Ashwin KV: notebook-style portfolio. Astro + TinaCMS.",
+  "description": "Joyal Varghese: notebook-style portfolio. Astro + TinaCMS.",
   "type": "module",
   "scripts": {
     "dev": "astro dev",
@@ -16,7 +16,7 @@
     "astro",
     "tinacms"
   ],
-  "author": "Ashwin KV",
+  "author": "Joyal Varghese",
   "license": "MIT",
   "dependencies": {
     "astro": "^6.3.5",

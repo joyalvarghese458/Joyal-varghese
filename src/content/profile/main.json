@@ -1,6 +1,6 @@
 {
-  "name": "Ashwin KV",
-  "firstName": "Ashwin",
+  "name": "Joyal Varghese",
+  "firstName": "Joyal",
   "greeting": "hi, I'm",
   "tagline": [
     {
@@ -8,65 +8,73 @@
       "highlight": ""
     },
     {
-      "text": "senior frontend engineer",
+      "text": "full-stack developer",
       "highlight": "yellow"
     },
     {
-      "text": " & ",
+      "text": " turning ideas into ",
       "highlight": ""
     },
     {
-      "text": "co-founder at Octane Innovations",
+      "text": "scalable solutions.",
       "highlight": "pink"
-    },
-    {
-      "text": ", building for the web.",
-      "highlight": ""
     }
   ],
-  "status": "open to new opportunities · building allocat",
-  "photo": "/media/ChatGPT Image May 20, 2026, 01_04_32 AM.png",
+  "status": "building ERP solutions · Sharjah, UAE",
+  "photo": "/media/joyal-portrait.png",
   "photoCaption": "that's me, says hi",
   "tags": [
-    "co-founder",
-"frontend",
-"javascript",
     "full-stack",
     "react",
-"next.js",
+    "next.js",
     "typescript",
-    "node"
+    "nestjs",
+    "postgresql"
   ],
-  "bio": "I write code for the web, mostly frontend, often the whole stack. I've built real-time collaboration tools, e-commerce from scratch, tax automation for UAE businesses, and live-streamed classrooms. Now I'm co-founding Octane Innovations. I care about fast pages, calm interfaces, and details that make people smile.",
+  "bio": "I'm a software developer based in Sharjah, UAE. I build web applications, ERP systems, and practical business tools across the full stack. At Erick Trading LLC, I'm independently developing a multi-branch ERP system, from architecture and database design to responsive interfaces, secure APIs, deployment, and maintenance. Previously, I built enterprise applications at Reon Technologies. I care about clean code, thoughtful interfaces, and solving real business problems.",
   "contacts": [
     {
       "icon": "✉",
-      "label": "ashwinkv.akv@gmail.com",
-      "url": "mailto:ashwinkv.akv@gmail.com",
+      "label": "joyalvarghese458@gmail.com",
+      "url": "mailto:joyalvarghese458@gmail.com",
       "sub": "email",
       "color": "yellow"
     },
     {
-      "icon": "GH",
-      "label": "github.com/dreamographer",
-      "url": "https://github.com/dreamographer",
-      "sub": "code",
-      "color": "pink"
-    },
-    {
       "icon": "in",
-      "label": "linkedin.com/in/ashwin-kv",
-      "url": "https://www.linkedin.com/in/ashwin-kv/",
-      "sub": "work",
+      "label": "Joyal Varghese",
+      "url": "https://linkedin.com/in/joyal-varghese-68aa6a243",
+      "sub": "linkedin",
       "color": "blue"
     },
     {
-      "icon": "𝕏",
-      "label": "@Dreamographer_",
-      "url": "https://x.com/Dreamographer_",
-      "sub": "thoughts",
+      "icon": "↗",
+      "label": "+971 56 845 0406",
+      "url": "tel:+971568450406",
+      "sub": "phone",
+      "color": "pink"
+    },
+    {
+      "icon": "WA",
+      "label": "Message me on WhatsApp",
+      "url": "https://wa.me/971568450406",
+      "sub": "whatsapp",
+      "color": "green"
+    },
+    {
+      "icon": "IG",
+      "label": "@joyal__11",
+      "url": "https://www.instagram.com/joyal__11/",
+      "sub": "instagram",
+      "color": "pink"
+    },
+    {
+      "icon": "CV",
+      "label": "Download my resume",
+      "url": "/Joyal_Varghese_Resume.pdf",
+      "sub": "resume · PDF",
       "color": "green"
     }
   ],
-  "footerNote": "© 2026 ashwin kv, built by hand, scribbled with love."
+  "footerNote": "© 2026 Joyal Varghese. Built with Astro, scribbled with love."
 }

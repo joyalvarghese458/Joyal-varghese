@@ -1,0 +1,7 @@
+Generated with the built-in image generation tool using Joyal's supplied portrait as the identity reference and the supplied portfolio screenshot as the style reference.
+
+Asset: `public/media/joyal-portrait.png`
+
+Final prompt:
+
+Use case: identity-preserve. Create a photorealistic portfolio portrait of Joyal, the man in the SECOND input image (white collared shirt, white background). Preserve his recognizable facial structure, eyes, nose, complexion, short wavy hairstyle and trimmed facial hair faithfully. FIRST input image is style/composition reference only, do not copy that man's identity. Recreate the warm, candid desk-side atmosphere of the photo inside that reference: Joyal seated at a wooden desk, looking naturally at camera, wearing a simple brown textured crew-neck t-shirt, hands resting naturally near an open notebook, laptop partly visible in lower left, modest workspace with softly blurred books and sticky notes, warm directional late-afternoon window light and soft shadows, subtle analog film grain, muted earthy colors, realistic skin texture. Medium seated portrait, head through forearms visible, centered composition, vertical 4:5 photograph. Output ONLY the edge-to-edge rectangular photographic image; the website already supplies the white Polaroid border, tape, grid background and handwritten caption so do not bake those decorative elements into this asset. No watermark or added text.

@@ -4,16 +4,37 @@
 // single GridPaper so the notebook paper fills the viewport.
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
+import profile from '../content/profile/main.json';
 
 interface Props {
   title?: string;
   description?: string;
+  type?: 'website' | 'article';
+  structuredData?: Record<string, unknown>;
+  noindex?: boolean;
 }
 
 const {
-  title = 'Ashwin KV · Portfolio',
-  description = 'Ashwin KV, senior frontend engineer, self-taught, building for the web.',
+  title = 'Joyal Varghese · Portfolio',
+  description = 'Joyal Varghese, full-stack developer in Sharjah, UAE, building web applications and ERP systems.',
+  type = 'website',
+  structuredData,
+  noindex = false,
 } = Astro.props;
+const pathname = Astro.url.pathname.endsWith('.html') ? Astro.url.pathname : `${Astro.url.pathname.replace(/\/$/, '')}/`;
+const canonical = Astro.site ? new URL(pathname, Astro.site).href : undefined;
+const image = Astro.site && profile.photo ? new URL(profile.photo, Astro.site).href : undefined;
+const homeData = pathname === '/' ? {
+  '@context': 'https://schema.org', '@type': 'ProfilePage', url: canonical,
+  mainEntity: {
+    '@type': 'Person', name: profile.name, jobTitle: 'Full Stack Software Developer',
+    description, image, url: canonical,
+    sameAs: profile.contacts.filter((contact) => contact.sub === 'linkedin').map((contact) => contact.url),
+    homeLocation: { '@type': 'Place', name: 'Sharjah, United Arab Emirates' },
+    knowsAbout: ['React', 'Next.js', 'NestJS', 'TypeScript', 'PostgreSQL', 'ERP development'],
+  },
+} : undefined;
+const schema = structuredData ?? homeData;
 ---
 
 <!doctype html>
@@ -24,9 +45,22 @@ const {
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="author" content={profile.name} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    {canonical && !noindex && <link rel="canonical" href={canonical} />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="Joyal Varghese" />
+    <meta property="og:locale" content="en_GB" />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {image && <meta property="og:image" content={image} />}
+    {image && <meta property="og:image:alt" content="Joyal Varghese, full stack developer in Sharjah, UAE" />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {image && <meta name="twitter:image" content={image} />}
+    {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -41,9 +75,8 @@ const {
     <ClientRouter />
   </head>
   <body>
-    {/* animate="none": Astro swaps instantly; the wavy strip-flip below
-        provides the visual transition. */}
-    <main transition:animate="none">
+    {/* Capture the whole rendered page so scoped styles survive the turn. */}
+    <main>
       <slot />
     </main>
 
@@ -51,7 +84,9 @@ const {
       // Scroll-reveal: fade + rise [data-reveal] elements as they enter view.
       // Auto-staggers items that appear together; respects reduced-motion;
       // re-runs after every client-side navigation (astro:page-load).
+      let revealObserver: IntersectionObserver | null = null;
       function initReveal() {
+        revealObserver?.disconnect();
         const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
         if (!els.length) return;
 
@@ -84,6 +119,7 @@ const {
           { threshold: 0.1, rootMargin: '0px 0px -8% 0px' },
         );
 
+        revealObserver = io;
         els.forEach((el) => io.observe(el));
       }
 
@@ -108,127 +144,28 @@ const {
       }
       document.addEventListener('astro:before-preparation', playFlip);
 
-      // ---- Wavy page-flip ------------------------------------------------
-      // The page is cloned into vertical strips that turn on the shared
-      // spine with a staggered delay, so a curl ripples across the sheet
-      // like a real page being turned.
-      //   Forward (into a deeper page): the OLD page curls away to reveal
-      //     the new page beneath.
-      //   Back (toward home / a shallower page): the destination page folds
-      //     IN over the page you were on, like turning the page back.
-      const FLIP_STRIPS = 12;
-      const FLIP_STAGGER = 24; // ms between neighbouring strips
-      const FLIP_DURATION = 660; // keep in sync with .nb-flip-strip animation
-
-      // Depth = number of path segments; a shallower destination = "back".
-      const pathDepth = (path: string) => path.split('/').filter(Boolean).length;
-
-      const cloneMain = () => {
-        const main = document.querySelector('main');
-        if (!main) return null;
-        const node = main.cloneNode(true) as HTMLElement;
-        node.querySelectorAll('script').forEach((s) => s.remove());
-        return node;
-      };
-
-      let flipCapture:
-        | { node: HTMLElement; scrollY: number; back: boolean }
-        | null = null;
-
-      // Snapshot the outgoing page and decide direction. The before-swap
-      // event carries Astro-computed from/to URLs (timing-independent):
-      // a shallower destination than the origin = a "back" navigation.
-      document.addEventListener('astro:before-swap', (e) => {
-        flipCapture = null;
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        const node = cloneMain();
-        if (!node) return;
-        const ev = e as unknown as { from?: URL; to?: URL };
-        const back =
-          !!ev.from &&
-          !!ev.to &&
-          pathDepth(ev.to.pathname) < pathDepth(ev.from.pathname);
-        flipCapture = { node, scrollY: window.scrollY, back };
+      // Set direction before Astro captures the rendered outgoing page.
+      // Native snapshots retain scoped CSS without cloning the page DOM.
+      document.addEventListener('astro:before-preparation', (event) => {
+        const depth = (url: URL) => url.pathname.split('/').filter(Boolean).length;
+        if (depth(event.to) < depth(event.from)) event.direction = 'back';
       });
 
-      // After the swap, build the strip overlay and run the curl.
+      document.addEventListener('astro:before-swap', (event) => {
+        revealObserver?.disconnect();
+        event.newDocument.documentElement.classList.add('js');
+      });
+
+      // Resolve above-the-fold reveals before the destination snapshot.
+      // Otherwise the page turn exposes hidden content that pops in afterward.
       document.addEventListener('astro:after-swap', () => {
-        const cap = flipCapture;
-        flipCapture = null;
-        if (!cap) return;
-
-        document.querySelectorAll('.nb-flip-overlay').forEach((o) => o.remove());
-
-        const vw = document.documentElement.clientWidth;
-        const sw = vw / FLIP_STRIPS;
-        const back = cap.back;
-
-        const overlay = document.createElement('div');
-        overlay.className = back
-          ? 'nb-flip-overlay nb-flip-overlay--back'
-          : 'nb-flip-overlay';
-
-        // Forward: strips show the OLD page, curling away.
-        // Back: strips show the NEW (live) page folding in, over a static
-        //       backdrop of the OLD page.
-        let stripNode: HTMLElement;
-        let stripScrollY: number;
-
-        if (back) {
-          const backdrop = document.createElement('div');
-          backdrop.className = 'nb-flip-backdrop';
-          const bwrap = document.createElement('div');
-          bwrap.className = 'nb-flip-page';
-          bwrap.style.width = vw + 'px';
-          bwrap.style.left = '0px';
-          bwrap.style.top = -cap.scrollY + 'px';
-          cap.node.style.width = vw + 'px';
-          bwrap.appendChild(cap.node);
-          backdrop.appendChild(bwrap);
-          overlay.appendChild(backdrop);
-
-          stripNode = cloneMain() ?? cap.node;
-          stripScrollY = window.scrollY;
-        } else {
-          stripNode = cap.node;
-          stripScrollY = cap.scrollY;
-        }
-
-        for (let i = 0; i < FLIP_STRIPS; i++) {
-          // Forward: held (right) edge leads. Back: spine side leads.
-          const order = back ? i : FLIP_STRIPS - 1 - i;
-          const delay = order * FLIP_STAGGER + 'ms';
-
-          const strip = document.createElement('div');
-          strip.className = 'nb-flip-strip';
-          strip.style.left = i * sw + 'px';
-          strip.style.width = Math.ceil(sw) + 1 + 'px';
-          strip.style.transformOrigin = -i * sw + 'px 50%';
-          strip.style.animationDelay = delay;
-
-          const page = stripNode.cloneNode(true) as HTMLElement;
-          page.style.width = vw + 'px';
-
-          const wrap = document.createElement('div');
-          wrap.className = 'nb-flip-page';
-          wrap.style.width = vw + 'px';
-          wrap.style.left = -i * sw + 'px';
-          wrap.style.top = -stripScrollY + 'px';
-          wrap.appendChild(page);
-
-          const shade = document.createElement('div');
-          shade.className = 'nb-flip-shade';
-          shade.style.animationDelay = delay;
-
-          strip.appendChild(wrap);
-          strip.appendChild(shade);
-          overlay.appendChild(strip);
-        }
-
-        document.body.appendChild(overlay);
-
-        const life = FLIP_DURATION + (FLIP_STRIPS - 1) * FLIP_STAGGER + 90;
-        window.setTimeout(() => overlay.remove(), life);
+        document.querySelectorAll<HTMLElement>('main [data-reveal]').forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            el.removeAttribute('data-reveal');
+            el.style.transitionDelay = '';
+          }
+        });
       });
     </script>
   </body>
