@@ -726,6 +726,15 @@ function formatBlogDate(iso: string): string {
   padding-top: 34px;
 }
 
+@media (max-width: 879px) {
+  /* Show the bio immediately below the portrait on mobile. */
+  :global(html.js) .bio-section[data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 .bio-body {
   padding: 0 4px;
   max-width: 820px;
