@@ -2,7 +2,7 @@
 
 Mini blogs live in `src/content/blog/*.md` and can be edited through TinaCMS's Mini Blog Articles collection. Each has a title, description, publication date, topic and Markdown body. The homepage preview and blog index include local articles and optional external blog links. Reading time is calculated from the article body.
 
-The default public address is `https://joyal.myportfoliowebsite.com`, from the supplied resume. Set the `SITE_URL` build environment variable to the actual production origin before deploying elsewhere. Canonicals, social URLs, structured data, robots.txt and sitemap.xml use that origin. Preview builds should not be submitted for indexing.
+The default public address is `https://joyalvarghese.myportfoliowebsite.com`, from the supplied resume. Set the `SITE_URL` build environment variable to the actual production origin before deploying elsewhere. Canonicals, social URLs, structured data, robots.txt and sitemap.xml use that origin. Preview builds should not be submitted for indexing.
 
 The four initial articles were drafted with AI assistance from the supplied project information. Review the wording before publication, especially first-person advice. They share their actual creation date rather than fabricated historical dates. Update a post's date only when publishing it, not on every build.
 
