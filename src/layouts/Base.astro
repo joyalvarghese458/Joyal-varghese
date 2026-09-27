@@ -24,6 +24,7 @@ const {
 const pathname = Astro.url.pathname.endsWith('.html') ? Astro.url.pathname : `${Astro.url.pathname.replace(/\/$/, '')}/`;
 const canonical = Astro.site ? new URL(pathname, Astro.site).href : undefined;
 const image = Astro.site && profile.photo ? new URL(profile.photo, Astro.site).href : undefined;
+const ogImage = Astro.site ? new URL('/media/og-image.png', Astro.site).href : undefined;
 const homeData = pathname === '/' ? {
   '@context': 'https://schema.org', '@type': 'ProfilePage', url: canonical,
   mainEntity: {
@@ -54,12 +55,12 @@ const schema = structuredData ?? homeData;
     <meta property="og:site_name" content="Joyal Varghese" />
     <meta property="og:locale" content="en_GB" />
     {canonical && <meta property="og:url" content={canonical} />}
-    {image && <meta property="og:image" content={image} />}
-    {image && <meta property="og:image:alt" content="Joyal Varghese, full stack developer in Sharjah, UAE" />}
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:alt" content="Joyal Varghese, full stack developer in Sharjah, UAE" />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    {image && <meta name="twitter:image" content={image} />}
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
     {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
