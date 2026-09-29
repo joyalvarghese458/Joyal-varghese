@@ -4,23 +4,45 @@ const path = Astro.url.pathname;
 ---
 <header class="site-header">
   <a class="site-brand" href="/" aria-label="Joyal Varghese — home">// joyal.varghese <span>software developer</span></a>
-  <nav aria-label="Main navigation">
+  <details class="mobile-menu">
+    <summary aria-label="Toggle navigation" title="Toggle navigation">
+      <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+    </summary>
+    <nav aria-label="Mobile navigation">
+      {navigation.map(({ href, label }) => (
+        <a href={href} aria-current={(href === '/' ? path === '/' : path.startsWith(href.replace(/\/$/, ''))) ? 'page' : undefined}>{label}</a>
+      ))}
+    </nav>
+  </details>
+  <nav class="desktop-nav" aria-label="Main navigation">
     {navigation.map(({ href, label }) => (
       <a href={href} aria-current={(href === '/' ? path === '/' : path.startsWith(href.replace(/\/$/, ''))) ? 'page' : undefined}>{label}</a>
     ))}
   </nav>
 </header>
 <style>
-  .site-header { padding: 18px var(--nb-pad) 12px; border-bottom: 1px dashed rgba(90,90,90,.4); }
+  .site-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px var(--nb-pad) 12px; border-bottom: 1px dashed rgba(90,90,90,.4); }
   .site-brand { display: inline-block; font: 11px/1.6 'JetBrains Mono', monospace; text-decoration: none; letter-spacing: .5px; padding: 4px 0; }
   .site-brand span { display: block; color: var(--nb-pencil); font-size: 10px; }
-  nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 12px; gap: 2px 8px; }
-  nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 7px 2px; font-size: 18px; text-decoration: none; border-radius: 3px; white-space: nowrap; }
+  .mobile-menu { position: relative; flex: none; z-index: 10; }
+  summary { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 7px; border: 1.5px solid var(--nb-ink); border-radius: 3px; background: var(--nb-yellow); cursor: pointer; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary:focus-visible, nav a:focus-visible { outline: 3px solid var(--nb-ink); outline-offset: 3px; }
+  .menu-icon { display: grid; gap: 4px; width: 19px; }
+  .menu-icon span { display: block; height: 2px; background: var(--nb-ink); border-radius: 2px; }
+  .mobile-menu[open] .menu-icon span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .mobile-menu[open] .menu-icon span:nth-child(2) { opacity: 0; }
+  .mobile-menu[open] .menu-icon span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .mobile-menu:not([open]) nav { display: none; }
+  .mobile-menu nav { position: absolute; top: calc(100% + 8px); right: 0; display: grid; width: min(280px, calc(100vw - 68px)); padding: 8px; border: 1.5px solid var(--nb-ink); border-radius: 3px; background: var(--nb-paper); box-shadow: 5px 6px 0 rgba(45, 61, 43, .2); }
+  nav a { display: flex; align-items: center; min-height: 44px; padding: 7px 12px; font-size: 18px; text-decoration: none; border-radius: 3px; }
   nav a:hover, nav a[aria-current='page'] { background: linear-gradient(transparent 25%, var(--nb-yellow) 25%, var(--nb-yellow) 80%, transparent 80%); }
   nav a[aria-current='page'] { font-weight: 700; }
+  .desktop-nav { display: none; }
   @media (min-width: 880px) {
-    .site-header { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-top: 20px; }
-    nav { display: flex; gap: 16px; margin-top: 0; }
-    nav a { padding-inline: 5px; font-size: 20px; }
+    .site-header { gap: 24px; padding-top: 20px; }
+    .mobile-menu { display: none; }
+    .desktop-nav { display: flex; gap: 16px; }
+    .desktop-nav a { padding-inline: 5px; font-size: 20px; }
   }
 </style>
