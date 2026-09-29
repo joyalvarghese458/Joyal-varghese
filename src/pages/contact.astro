@@ -37,10 +37,6 @@ const email = profile.contacts.find((contact) => contact.sub === 'email')!;
           <HandBox rounded width={450} height={500} />
           <form action="https://formspree.io/f/mvkgdwwo" method="POST" aria-labelledby="message-heading" aria-describedby="form-help">
             <p id="form-help">Send me a note here. Your message goes through Formspree to my inbox.</p>
-            <div class="spam-trap" aria-hidden="true">
-              <label for="contact-website">Leave this field empty</label>
-              <input id="contact-website" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
-            </div>
             <label for="contact-name">Your name</label>
             <input id="contact-name" name="name" autocomplete="name" required minlength="2" maxlength="100" />
             <label for="contact-email">Your email</label>
@@ -71,7 +67,6 @@ const email = profile.contacts.find((contact) => contact.sub === 'email')!;
   .draft-panel { position: relative; padding: 24px 20px; }
   form { position: relative; }
   form p { margin: 0 0 20px; font-size: 18px; }
-  .spam-trap { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   label { display: block; font-size: 20px; margin-bottom: 5px; }
   input, textarea, select { display: block; width: 100%; min-width: 0; min-height: 48px; margin-bottom: 18px; padding: 9px 12px; border: 1.5px solid var(--nb-pencil); border-radius: 3px; color: var(--nb-ink); background: rgba(251,250,245,.8); font-size: 18px; }
   textarea { resize: vertical; }

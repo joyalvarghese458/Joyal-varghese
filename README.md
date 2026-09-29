@@ -47,7 +47,7 @@ If Astro telemetry cannot write to a restricted user directory, set `ASTRO_TELEM
 
 The supplied portraits are optimized by Astro into responsive WebP images. The hero loads eagerly; images further down the site may load lazily. Replace the profile photo or resume in `public/` as needed.
 
-The contact form sends a native HTML POST to the supplied Formspree endpoint (`mvkgdwwo`) on Vercel and also works without JavaScript. It includes Formspree's `_gotcha` honeypot. Check that CAPTCHA is enabled in the form's Formspree **Settings → Spam protection**. After deployment, you may set **Restrict to Domain** in the Formspree project settings to the production hostname, without `https://`; this can block Vercel preview and localhost submissions. Formspree receives and processes submitted messages. The direct email and WhatsApp links remain available.
+The contact form sends a native HTML POST to the supplied Formspree endpoint (`mvkgdwwo`) on Vercel and also works without JavaScript. Formspree's optional `_gotcha` honeypot was removed after a real test was incorrectly sent to Spam because the field had a value. Keep CAPTCHA enabled in the form's Formspree **Settings → Spam protection**; [Formspree documents CAPTCHA as its built-in protection](https://help.formspree.io/articles/building-your-form/honeypot-spam-filtering). After deployment, you may set **Restrict to Domain** in the Formspree project settings to the production hostname, without `https://`; this can block Vercel preview and localhost submissions. Formspree receives and processes submitted messages. The direct email and WhatsApp links remain available.
 
 ## Optional TinaCMS
 
