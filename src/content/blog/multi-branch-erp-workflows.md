@@ -26,4 +26,4 @@ An operational dashboard should help someone answer concrete questions: what is 
 
 Start with the tasks people repeat every day. Build clear statuses, useful filters, and understandable validation messages around them. Add reporting that helps users trace an issue back to its source record.
 
-See the [multi-branch ERP case study](/projects/multi-branch-erp/) for the scope of my work, or [get in touch](/#contact) about a business application.
+See the [multi-branch ERP case study](/case-studies/multi-branch-erp/) for the scope of my work, or [get in touch](/contact/) about a business application.

@@ -1,0 +1,163 @@
+---
+import Base from '../layouts/Base.astro';
+import GridPaper from '../components/GridPaper.astro';
+import StickyNote from '../components/StickyNote.astro';
+import Highlight from '../components/Highlight.astro';
+import HandBox from '../components/HandBox.astro';
+import Marker from '../components/Marker.astro';
+import Hand from '../components/Hand.astro';
+import Mono from '../components/Mono.astro';
+import Doodle from '../components/Doodle.astro';
+import HandLink from '../components/HandLink.astro';
+import { NB, swatch } from '../lib/notebook';
+import { services } from '../lib/services';
+
+const process = [
+  { title: 'Understand the work', description: 'Start with the people using the software, the current workflow, and the problem to solve. Agree on the scope and priorities.' },
+  { title: 'Plan the foundations', description: 'Map the screens, data, permissions, and integrations so the interface and backend support the same workflow.' },
+  { title: 'Build & review', description: 'Build in manageable stages, review working features, and test the important paths across mobile and desktop.' },
+  { title: 'Launch & improve', description: 'Prepare deployment, review the handover, and agree on the maintenance and improvements the application needs next.' },
+];
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Software development services',
+  itemListElement: services.map((service, index) => ({
+    '@type': 'ListItem', position: index + 1,
+    item: {
+      '@type': 'Service', name: service.title, description: service.summary,
+      url: Astro.site ? new URL(`/services/#${service.id}`, Astro.site).href : undefined,
+      provider: { '@type': 'Person', name: 'Joyal Varghese', '@id': Astro.site ? `${Astro.site.href}#person` : undefined },
+    },
+  })),
+};
+---
+
+<Base
+  title="Software Developer Services | Joyal Varghese, UAE"
+  description="Software developer services by Joyal Varghese in Sharjah, UAE: custom ERP systems, React and Next.js web apps, NestJS APIs, and e-commerce websites."
+  structuredData={structuredData}
+>
+  <GridPaper size={22}>
+    <div class="services-page">
+      <header class="page-header">
+        <Mono size={10} as="p" class="eyebrow">Practical software, thoughtful interfaces</Mono>
+        <Marker as="h1" size="clamp(42px, 8vw, 72px)" class="page-title">Services.</Marker>
+        <Hand as="p" size="clamp(21px, 2.6vw, 28px)" class="page-intro">
+          Need a <Highlight>software developer</Highlight> to bring your next idea to life?
+        </Hand>
+        <Hand as="p" size="clamp(19px, 2.1vw, 23px)" color={NB.inkSoft} class="intro-copy">
+          I build web applications, ERP systems, and business tools across the full stack. Based in Sharjah, UAE, my work connects useful interfaces with the APIs and data behind them.
+        </Hand>
+        <HandLink href="/contact/" color={NB.redInk} class="intro-link">
+          <Hand size={23} color={NB.redInk}>Tell me about your project →</Hand>
+        </HandLink>
+      </header>
+
+      <div class="services-grid">
+        {services.map((service, index) => (
+          <section id={service.id} class="service-card" aria-labelledby={`${service.id}-heading`}>
+            <HandBox rounded width={440} height={440} />
+            <div class="card-content">
+              <div class="card-heading">
+                <StickyNote color={swatch(service.color)} rotate={index % 2 === 0 ? -3 : 3} inline>
+                  <Mono size={13} color={NB.ink}>0{index + 1}</Mono>
+                </StickyNote>
+                <Hand as="h2" id={`${service.id}-heading`} size="clamp(26px, 3vw, 32px)" weight={700} class="service-title">{service.title}</Hand>
+              </div>
+              <Hand as="p" size={20} color={NB.inkSoft} class="service-summary">{service.summary}</Hand>
+              <ul class="includes-list">
+                {service.includes.map((item) => (
+                  <li><Doodle kind="check" size={15} color={NB.red} class="check" /><Hand size={18}>{item}</Hand></li>
+                ))}
+              </ul>
+              <ul class="stack" aria-label="Technologies">
+                {service.stack.map((technology) => <li>{technology}</li>)}
+              </ul>
+              <HandLink href={`/case-studies/${service.caseStudy.slug}/`} color={NB.redInk} class="case-study-link">
+                <Hand size={20} color={NB.redInk}>See {service.caseStudy.title} →</Hand>
+              </HandLink>
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <section class="process-section" aria-labelledby="process-heading">
+        <h2 id="process-heading" class="section-heading">
+          <StickyNote color={NB.yellow} rotate={-2} inline>
+            <Marker size="clamp(26px, 3vw, 34px)">How I approach a project</Marker>
+          </StickyNote>
+        </h2>
+        <ol class="process-list">
+          {process.map((step, index) => (
+            <li class="process-step">
+              <Marker size={32} color={NB.redInk} class="step-number" aria-hidden="true">0{index + 1}</Marker>
+              <div>
+                <Hand as="h3" size={25} weight={700} class="step-title">{step.title}</Hand>
+                <Hand as="p" size={19} color={NB.inkSoft} class="step-copy">{step.description}</Hand>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section class="next-page" aria-labelledby="contact-heading">
+        <Marker as="h2" id="contact-heading" size="clamp(30px, 4vw, 42px)" class="next-title">Let's work through the idea.</Marker>
+        <Hand as="p" size="clamp(20px, 2.2vw, 25px)" color={NB.inkSoft} class="next-copy">
+          Share what you're building, who it's for, and the part you need help with. We can start there.
+        </Hand>
+        <div class="next-links">
+          <HandLink href="/contact/" color={NB.redInk}><Hand size={23} color={NB.redInk}>Start a conversation →</Hand></HandLink>
+          <HandLink href="/case-studies/"><Hand size={23}>Explore all case studies →</Hand></HandLink>
+          <HandLink href="/about/"><Hand size={23}>More about me →</Hand></HandLink>
+        </div>
+      </section>
+    </div>
+  </GridPaper>
+</Base>
+
+<style>
+  .services-page { max-width: 1280px; margin: 0 auto; padding: 28px var(--nb-pad) 48px; }
+  .eyebrow { margin: 0 0 12px; line-height: 1.7; }
+  .page-title { margin: 0; }
+  .page-intro { margin: 18px 0 0; max-width: 760px; }
+  .intro-copy { max-width: 760px; margin: 14px 0 10px; }
+  .intro-link, .case-study-link { display: inline-flex; align-items: center; min-height: 44px; }
+  .services-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 25px; margin-top: 30px; }
+  .service-card { position: relative; min-width: 0; padding: 22px 19px; scroll-margin-top: 28px; }
+  .card-content { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; align-items: flex-start; }
+  .card-heading { display: flex; align-items: center; gap: 15px; }
+  .service-title { margin: 0; }
+  .service-summary { margin: 18px 0 0; }
+  .includes-list { list-style: none; margin: 18px 0; padding: 0; display: grid; gap: 12px; }
+  .includes-list li { display: flex; align-items: flex-start; gap: 9px; }
+  .check { flex: 0 0 auto; margin-top: 5px; }
+  .stack { margin: auto 0 12px; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+  .stack li { font-family: 'JetBrains Mono', monospace; font-size: 10px; line-height: 1.6; padding: 3px 7px; border: 1px solid rgba(90, 90, 90, 0.4); border-radius: 3px; background: var(--nb-paper); }
+  .case-study-link { margin-top: 3px; }
+  .process-section { margin-top: 46px; }
+  .section-heading { margin: 0 0 30px; }
+  .process-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; }
+  .process-step { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 9px; }
+  .step-number { padding-top: 2px; }
+  .step-title { margin: 0; }
+  .step-copy { margin: 8px 0 0; }
+  .next-page { margin-top: 42px; border-top: 1.5px dashed var(--nb-pencil); padding-top: 28px; }
+  .next-title { margin: 0; }
+  .next-copy { margin: 16px 0 0; max-width: 720px; }
+  .next-links { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 14px; }
+  .next-links :global(a) { display: inline-flex; align-items: center; min-height: 44px; }
+
+  @media (min-width: 700px) {
+    .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; }
+    .process-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px; }
+  }
+  @media (min-width: 880px) {
+    .services-page { padding-top: 40px; padding-bottom: 64px; }
+    .services-grid { margin-top: 40px; gap: 30px; }
+    .service-card { padding: 28px; }
+    .process-section { margin-top: 60px; }
+    .process-list { gap: 36px 48px; }
+    .next-page { margin-top: 60px; padding-top: 36px; }
+  }
+</style>

@@ -1,3 +1,5 @@
+> Historical design reference: identity examples and route instructions below describe the original handoff. Current Joyal Varghese content lives in src/content/. See README.md for the implemented six-page structure; the current font is Kalam.
+
 # Content input: fill this, I'll wire it into the site
 
 Fill whatever you can. Leave `?` where you don't know. Anything you skip, I'll fall

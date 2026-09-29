@@ -11,6 +11,7 @@ interface Props {
 }
 
 const { color = NB.yellow, rotate = -2, peel = true, inline = false, class: className, ...rest } = Astro.props;
+const Tag = inline ? 'span' : 'div';
 
 const cls = [
   'nb-sticky',
@@ -19,10 +20,10 @@ const cls = [
 ].filter(Boolean).join(' ');
 ---
 
-<span
+<Tag
   class={cls}
   style={`background: ${color}; transform: rotate(${rotate}deg); display: ${inline ? 'inline-block' : 'block'};`}
   {...rest}
 >
-  <span class="nb-sticky-inner"><slot /></span>
-</span>
+  <Tag class="nb-sticky-inner"><slot /></Tag>
+</Tag>

@@ -7,3 +7,5 @@ Still needed: optional gallery photos, project screenshots, and public project U
 The resume is available at `/Joyal_Varghese_Resume.pdf`. SEO URLs now default to the portfolio address in the resume. Set `SITE_URL` at build time if deploying on a different domain; see `docs/SEO.md`.
 
 Local setup: `npm ci --omit=dev` installs the dependencies needed for `npm run dev` and `npm run build`. A full install for TinaCMS failed on this machine with Node 24 because its `better-sqlite3` dependency required unavailable Visual Studio C++ build tools. TinaCMS editing has not been verified.
+
+The portfolio now has Home, About, Services, Case studies, Blogs, and Contact pages. All supplied experience, education, skill groups, projects, and articles are retained. Services are grounded in those resources and edited in src/lib/services.ts. Astro generates responsive WebP versions for the visible portrait. Historical design documents are marked as references to avoid reintroducing the previous owner’s identity.

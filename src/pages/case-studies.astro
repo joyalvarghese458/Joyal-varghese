@@ -1,0 +1,287 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import GridPaper from '../components/GridPaper.astro';
+import Hand from '../components/Hand.astro';
+import Marker from '../components/Marker.astro';
+import Mono from '../components/Mono.astro';
+import HandLink from '../components/HandLink.astro';
+import HandBox from '../components/HandBox.astro';
+import ProjectLogo from '../components/ProjectLogo.astro';
+import { NB, swatch } from '../lib/notebook';
+
+const allProjects = await getCollection('projects');
+const projects = allProjects.sort((a, b) => a.data.order - b.data.order);
+const pageUrl = Astro.site ? new URL('/case-studies/', Astro.site).href : undefined;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Software developer case studies',
+  url: pageUrl,
+  description: 'Software development projects by Joyal Varghese, including ERP systems, e-commerce websites, and business applications.',
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: projects.map((entry, index) => ({
+      '@type': 'ListItem', position: index + 1, name: entry.data.title,
+      url: Astro.site ? new URL(`/case-studies/${entry.id}/`, Astro.site).href : undefined,
+    })),
+  },
+};
+
+// Subtle alternating rotations mirroring the design reference
+const rots = [-0.6, 0.5, -0.4, 0.6, -0.3, 0.4];
+---
+
+<Base title="Software Developer Case Studies | Joyal Varghese" description="Explore Joyal Varghese's software developer case studies: ERP systems, business applications, and responsive e-commerce websites built in the UAE." structuredData={structuredData}>
+  <GridPaper size={22} style="min-height: 100vh;">
+
+    {/* ── Page header ── */}
+    <header class="page-header">
+      <div class="header-left">
+        <HandLink href="/" color={NB.pencil} class="back-link">
+          <Hand size={18} color={NB.pencil} as="span">← back to home</Hand>
+        </HandLink>
+        <Marker size="clamp(32px, 7vw, 60px)" as="h1" class="page-title">
+          Case Studies.
+        </Marker>
+      </div>
+      <Mono size={9} class="header-tag">joyal.varghese</Mono>
+    </header>
+
+    {/* ── Body ── */}
+    <div class="page-body">
+      <Hand size={19} color={NB.inkSoft} as="p" class="intro-line">
+        A look inside my work as a software developer: ERP systems, business tools, e-commerce, and portfolio experiences. The problem, the approach, and what I built.
+      </Hand>
+
+      {/* ── Projects grid ── */}
+      <div class="projects-grid">
+        {projects.map((entry, i) => {
+          const p = entry.data;
+          const rot = rots[i % rots.length];
+          const logoRot = i % 2 === 0 ? -4 : 4;
+          return (
+            <a
+              href={`/case-studies/${entry.id}/`}
+              class="project-card"
+              style={`--card-rot: ${rot}deg;`}
+              aria-label={`View case study for ${p.title}`}
+              data-reveal
+            >
+              {/* Hand-drawn border: position:absolute fills the card via HandBox */}
+              <HandBox rounded={true} color={NB.ink} strokeWidth={2} />
+
+              {/* All card content floats above the SVG border */}
+              <div class="card-inner">
+
+                {/* Mobile layout: logo + text side-by-side */}
+                {/* Desktop layout: logo+title row on top, then desc, then chips */}
+                <div class="card-logo-wrap">
+                  <ProjectLogo
+                    color={swatch(p.logoColor)}
+                    letter={p.title[0]}
+                    size={56}
+                    rot={logoRot}
+                  />
+                </div>
+
+                <div class="card-text">
+                  <div class="card-top-row">
+                    <Hand size="clamp(20px, 3.5vw, 28px)" weight={600} as="h2" class="card-title">
+                      {p.title}
+                    </Hand>
+                    <Mono size={9} class="card-tag">{p.tag}</Mono>
+                  </div>
+
+                  <Hand size={18} color={NB.inkSoft} as="span" class="card-desc">
+                    {p.summary}
+                  </Hand>
+
+                  <div class="stack-chips">
+                    {p.stack.map((s) => (
+                      <span class="chip">{s}</span>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            </a>
+          );
+        })}
+      </div>
+      <div class="project-contact">
+        <Hand size="clamp(20px, 3vw, 26px)" as="p">Have a workflow or website in mind?</Hand>
+        <HandLink href="/contact/" color={NB.redInk}><Hand size={22}>Let's talk about your project →</Hand></HandLink>
+      </div>
+    </div>
+
+  </GridPaper>
+</Base>
+
+<style>
+  /* ─────────────── Header ─────────────── */
+  .page-header {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 16px var(--nb-pad) 14px;
+    border-bottom: 1.5px dashed var(--nb-pencil);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .header-left { flex: 1; min-width: 0; }
+  .back-link { display: inline-block; }
+  .page-title {
+    display: block;
+    margin-top: 2px;
+    line-height: 1.05;
+  }
+  .header-tag { display: none; padding-bottom: 6px; flex-shrink: 0; }
+
+  /* ─────────────── Body ─────────────── */
+  .page-body {
+    padding: 16px var(--nb-pad) 40px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .intro-line {
+    display: block;
+    margin: 0 0 16px;
+  }
+
+  /* ─────────────── Grid ─────────────── */
+  .projects-grid {
+    display: grid;
+    gap: 14px;
+  }
+
+  /* ─────────────── Card ─────────────── */
+  .project-card {
+    position: relative;          /* HandBox is absolute inside this */
+    display: block;
+    padding: 14px;
+    text-decoration: none;
+    color: inherit;
+    transform: rotate(var(--card-rot, 0deg));
+    transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+  .project-card:hover {
+    transform: rotate(0deg) translateY(-2px);
+  }
+
+  /* Inner row: logo left, text right (mobile) */
+  .card-inner {
+    position: relative; /* sits above the SVG */
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .card-logo-wrap { flex-shrink: 0; }
+
+  .card-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .card-top-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .card-title { line-height: 1.25; margin: 0; overflow-wrap: anywhere; }
+  .card-tag { max-width: 100%; overflow-wrap: anywhere; }
+  .card-desc {
+    display: block;
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+
+  /* Stack chips */
+  .stack-chips {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px;
+    padding: 0 5px;
+    border: 1px solid var(--nb-pencil);
+    border-radius: 3px;
+    color: var(--nb-pencil);
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .project-contact { margin-top: 32px; padding-top: 20px; border-top: 1.5px dashed var(--nb-pencil); }
+  .project-contact p { margin: 0 0 8px; }
+  @media (min-width: 600px) and (max-width: 879px) {
+    .projects-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  /* ─────────────── Desktop (≥880px) ─────────────── */
+  @media (min-width: 880px) {
+    .page-header {
+      padding: 20px var(--nb-pad) 16px;
+      border-bottom-width: 1.8px;
+    }
+    .header-tag { display: inline; padding-bottom: 10px; }
+    .page-body {
+      padding-top: 24px;
+      padding-bottom: 60px;
+    }
+    .intro-line { margin-bottom: 22px; font-size: 24px; }
+
+    /* 3-column grid */
+    .projects-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    /* Desktop card: bigger padding, min height */
+    .project-card {
+      padding: 20px 22px 22px;
+      min-height: 206px;
+    }
+    .project-card:hover {
+      transform: rotate(0deg) translateY(-3px);
+    }
+
+    /* Desktop inner: logo + title on same first row, then desc + chips stacked */
+    .card-inner {
+      flex-direction: column;
+      gap: 0;
+    }
+    .card-logo-wrap {
+      /* Logo sits in the logo-title row */
+    }
+    /* Re-arrange: logo + top-row in a single flex row */
+    .card-inner {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+      gap: 0 14px;
+    }
+    .card-logo-wrap {
+      grid-row: 1;
+      grid-column: 1;
+      align-self: center;
+    }
+    .card-text {
+      grid-row: 1 / 3;
+      grid-column: 2;
+    }
+    /* On desktop, the top row shows tag above title (matching design ref) */
+    .card-top-row {
+      flex-direction: column-reverse;   /* tag first (small), then title */
+      align-items: flex-start;
+      gap: 0;
+    }
+    .card-tag { margin-bottom: 0; }
+    .card-desc { font-size: 20px; }
+    .chip { font-size: 10px; padding: 1px 7px; }
+  }
+</style>

@@ -1,0 +1,7 @@
+# Permanent legacy URL redirects for Netlify and Cloudflare Pages.
+/projects /case-studies/ 301
+/projects/ /case-studies/ 301
+/projects/* /case-studies/:splat 301
+/blog /blogs/ 301
+/blog/ /blogs/ 301
+/blog/* /blogs/:splat 301

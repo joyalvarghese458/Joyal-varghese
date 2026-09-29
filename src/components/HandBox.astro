@@ -36,11 +36,13 @@ const path = rounded
 ---
 
 <svg
+  aria-hidden="true"
+  focusable="false"
   viewBox={`0 0 ${w} ${h}`}
   width="100%"
   height="100%"
   class={className}
-  style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible;"
+  style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; pointer-events: none;"
   preserveAspectRatio="none"
   {...rest}
 >

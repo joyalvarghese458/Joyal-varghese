@@ -1,16 +1,27 @@
-# Blog and search setup
+# Search and publishing setup
 
-Mini blogs live in `src/content/blog/*.md` and can be edited through TinaCMS's Mini Blog Articles collection. Each has a title, description, publication date, topic and Markdown body. The homepage preview and blog index include local articles and optional external blog links. Reading time is calculated from the article body.
+The primary keyword is **software developer**. Page titles and visible introductions use it where relevant, with Sharjah/UAE context and specific services such as ERP, React web applications, and APIs. The portfolio does not claim unverified rankings, testimonials, awards, or results.
 
-The default public address is `https://joyalvarghese.myportfoliowebsite.com`, from the supplied resume. Set the `SITE_URL` build environment variable to the actual production origin before deploying elsewhere. Canonicals, social URLs, structured data, robots.txt and sitemap.xml use that origin. Preview builds should not be submitted for indexing.
+## Routes and metadata
 
-The four initial articles were drafted with AI assistance from the supplied project information. Review the wording before publication, especially first-person advice. They share their actual creation date rather than fabricated historical dates. Update a post's date only when publishing it, not on every build.
+The six main routes are `/`, `/about/`, `/services/`, `/case-studies/`, `/blogs/`, and `/contact/`. Five case studies and four local articles have their own URLs. Each indexable page has a unique title and description, an absolute canonical URL, Open Graph and Twitter metadata, and structured data. The shared schema connects a WebSite, Person, WebPage/ProfilePage/ContactPage, and breadcrumbs; specific pages add services, project collections, creative works, or BlogPosting data.
 
-After deployment, verify the production domain in Google Search Console, submit `/sitemap.xml`, and inspect the homepage and an article URL. Test the live article's structured data with Google's Rich Results Test. Local build checks cannot confirm Google indexing or search rankings.
+The sitemap includes only current indexable routes. Empty gallery and 404 pages are noindex. robots.txt references the sitemap and excludes the optional admin dashboard. Content is available without client-side rendering.
 
-The target phrases are used in relevant content, including a guide to choosing the best full stack developer in UAE for a project. The site does not claim an unverified award or ranking. No keyword stuffing, fabricated ratings, or hidden search text is used.
+Legacy `/projects/` and `/blog/` pages and detail routes redirect to `/case-studies/` and `/blogs/`. `public/_redirects` supplies 301 rules for Netlify and Cloudflare Pages. Astro also emits static redirect HTML for those known old URLs. Other hosts need equivalent server rules if HTTP 301 responses are required. Keep article filenames stable unless another redirect is added.
 
-References:
-- https://developers.google.com/search/docs/fundamentals/creating-helpful-content
-- https://developers.google.com/search/docs/appearance/structured-data/article
-- https://developers.google.com/search/docs/appearance/title-link
+## Content
+
+Articles live in `src/content/blog/*.md`, with title, description, publication date, topic, and Markdown body. Reading time is calculated from the body. The blog-links collection optionally adds external posts. Services are edited in `src/lib/services.ts` and shared by Home and Services.
+
+The initial four articles were drafted with AI assistance using supplied project information. Their dates reflect creation, not fabricated historical publication. Review article wording before publication and update dates only when publication or a substantive edit warrants it.
+
+## Before publishing
+
+1. Set `SITE_URL` to the production origin when it differs from `https://joyalvarghese.myportfoliowebsite.com` (the domain supplied in the resume).
+2. Run `npm run build` and `npm run verify`. Review pages at phone and desktop widths in a real browser.
+3. Check deployed canonical URLs, robots.txt, sitemap.xml, legacy HTTP redirects, the resume download, and contact links.
+4. Verify the domain in Google Search Console and submit `/sitemap.xml`. Inspect an article and a case study URL; test article schema in Google's Rich Results Test.
+5. Keep private previews behind hosting access controls or configure preview-wide noindex headers. Do not submit preview domains for indexing.
+
+The implementation supports crawling and indexing; local checks cannot confirm search-engine indexing or rankings. The contact form posts to Formspree and does not require an Astro server endpoint.

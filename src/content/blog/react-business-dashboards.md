@@ -30,4 +30,4 @@ For important changes, show what was saved and where the user can find it again.
 
 The backend must enforce access rules. The frontend can also explain why an action is unavailable when that explanation is useful, such as a request already awaiting approval.
 
-You can see the business context for these interfaces in my [Yasmac ERP project](/projects/yasmac-erp/) and [AK Prefab ERP project](/projects/ak-prefab-erp/).
+You can see the business context for these interfaces in my [Yasmac ERP project](/case-studies/yasmac-erp/) and [AK Prefab ERP project](/case-studies/ak-prefab-erp/).

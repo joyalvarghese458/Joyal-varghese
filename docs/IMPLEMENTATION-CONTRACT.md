@@ -1,3 +1,5 @@
+> Historical design reference: identity examples and route instructions below describe the original handoff. Current Joyal Varghese content lives in src/content/. See README.md for the implemented six-page structure; the current font is Kalam.
+
 # Implementation Contract: Ashwin KV Portfolio (Astro + TinaCMS)
 
 This is the shared contract every implementation agent builds against. Do not

@@ -1,0 +1,30 @@
+---
+import profile from '../content/profile/main.json';
+import StickyNote from './StickyNote.astro';
+import Hand from './Hand.astro';
+import Mono from './Mono.astro';
+import { swatch } from '../lib/notebook';
+---
+<div class="contact-grid">
+  {profile.contacts.map((contact, index) => {
+    const external = contact.url.startsWith('https://');
+    const resume = contact.url.endsWith('.pdf');
+    return <a href={contact.url} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} download={resume || undefined} data-astro-reload={resume || undefined} class="contact-card">
+      <StickyNote color={swatch(contact.color)} rotate={[-2, 1.5, 2, -1.5][index % 4]}>
+        <div class="card-inner">
+          <span class="contact-icon" aria-hidden="true">{contact.icon}</span>
+          <div class="contact-copy"><Mono size={10} as="div">{contact.sub}</Mono><Hand size="clamp(18px, 2vw, 22px)" as="div">{contact.label}</Hand></div>
+        </div>
+      </StickyNote>
+    </a>;
+  })}
+</div>
+<style>
+  .contact-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .contact-card { display: block; min-width: 0; text-decoration: none; }
+  .contact-card :global(.nb-sticky) { display: block; height: 100%; padding: 22px 18px; }
+  .card-inner { display: flex; align-items: center; gap: 12px; }
+  .contact-icon { font-size: 22px; font-weight: 700; display: inline-flex; width: 36px; height: 36px; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 50%; background: rgba(0,0,0,.06); }
+  .contact-copy { min-width: 0; overflow-wrap: anywhere; }
+  @media (min-width: 640px) { .contact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; } }
+</style>

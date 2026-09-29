@@ -12,23 +12,14 @@ import PhotoCutout from '../components/PhotoCutout.astro';
 import Marker from '../components/Marker.astro';
 import Hand from '../components/Hand.astro';
 import Mono from '../components/Mono.astro';
-import Doodle from '../components/Doodle.astro';
 import HandLink from '../components/HandLink.astro';
 import ProjectLogo from '../components/ProjectLogo.astro';
 import { NB, swatch } from '../lib/notebook';
+import { services } from '../lib/services';
 
 // ── Content ────────────────────────────────────────────────────────────────
 const profileEntries = await getCollection('profile');
 const profile = profileEntries[0].data;
-
-const allExperience = (await getCollection('experience'))
-  .sort((a, b) => a.data.order - b.data.order);
-
-const allEducation = (await getCollection('education'))
-  .sort((a, b) => a.data.order - b.data.order);
-
-const allSkills = (await getCollection('skills'))
-  .sort((a, b) => a.data.order - b.data.order);
 
 const allProjects = (await getCollection('projects'))
   .sort((a, b) => a.data.order - b.data.order);
@@ -37,10 +28,6 @@ const featuredProjects = allProjects.filter((p) => p.data.featured).length > 0
   ? allProjects.filter((p) => p.data.featured)
   : allProjects.slice(0, 3);
 
-const allGallery = (await getCollection('gallery'))
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 4);
-
 const allBlogLinks = (await getBlogPosts())
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
   .slice(0, 4);
@@ -48,19 +35,16 @@ const allBlogLinks = (await getBlogPosts())
 // Tag pill rotations
 const tagRots = [-2, 1, -1, 2, -1.5, 0.8, -0.6, 1.2, -0.9, 1.5];
 
-// Gallery photo rotations
-const galleryRots = [-2, 1.5, -1, 2.5];
-
 // Format blog date as "MAY 12" etc.
 function formatBlogDate(iso: string): string {
-  const d = new Date(iso);
+  const d = new Date(`${iso}T12:00:00Z`);
   const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-  return `${months[d.getMonth()]} ${d.getDate()}`;
+  return `${months[d.getUTCMonth()]} ${d.getUTCDate()}`;
 }
 ---
 
 <Base
-  title={`${profile.name} | Full Stack Software Developer in UAE`}
+  title={`${profile.name} | Software Developer in Sharjah, UAE`}
   description="Joyal Varghese is a full stack software developer in Sharjah, UAE, building React, Next.js and NestJS applications, ERP systems and business tools."
 >
   <GridPaper size={22} class="home-paper">
@@ -68,18 +52,7 @@ function formatBlogDate(iso: string): string {
     {/* Torn-paper top edge accent */}
     <div class="torn-top" aria-hidden="true"></div>
 
-    {/* ── Desktop top nav (hidden on mobile) ── */}
-    <nav class="top-nav" aria-label="Site navigation">
-      <Mono size={11} as="span">// portfolio.2026 · joyal.varghese</Mono>
-      <div class="top-nav-links">
-        <HandLink href="/projects"><Hand size={22}>work</Hand></HandLink>
-        {allGallery.length > 0 && (<HandLink href="/gallery"><Hand size={22}>gallery</Hand></HandLink>)}
-        {allBlogLinks.length > 0 && (<HandLink href="/blog"><Hand size={22}>writing</Hand></HandLink>)}
-        <HandLink href="#contact"><Hand size={22}>contact</Hand></HandLink>
-      </div>
-    </nav>
-
-    {/* ════════════════════════════════════════
+{/* ════════════════════════════════════════
         HERO
     ════════════════════════════════════════ */}
     <section class="hero-section">
@@ -100,7 +73,8 @@ function formatBlogDate(iso: string): string {
               rotate={-3}
               label={profile.photoCaption}
               src={profile.photo ?? undefined}
-              alt={`Photo of ${profile.firstName}`}
+              alt={`Portrait of ${profile.name}, software developer`}
+              loading="eager"
             />
           </div>
           {/* Desktop caption doodle */}
@@ -136,7 +110,7 @@ function formatBlogDate(iso: string): string {
           </div>
 
           {/* Tag pills */}
-          <a class="resume-link" href="/Joyal_Varghese_Resume.pdf" download data-astro-reload>Download resume ↗</a>
+          <div class="hero-actions"><a class="resume-link" href="/case-studies/">Explore my work →</a><a class="resume-link resume-secondary" href="/Joyal_Varghese_Resume.pdf" download data-astro-reload>Download resume ↗</a></div>
 
           <div class="hero-tags">
             {profile.tags.map((tag, i) => (
@@ -164,118 +138,48 @@ function formatBlogDate(iso: string): string {
         BIO
     ════════════════════════════════════════ */}
     <section class="section bio-section" data-reveal>
-      <div class="section-title">
+      <h2 class="section-title">
         <StickyNote color={NB.yellow} rotate={-3} inline>
           <Marker size={"clamp(26px, 3vw, 34px)"}>Personal Bio</Marker>
         </StickyNote>
-      </div>
+      </h2>
       <div class="bio-body">
         <Hand size={"clamp(20px, 2.2vw, 26px)"} color={NB.ink} as="p" class="bio-text">
-          {profile.bio}
+          I'm a software developer in Sharjah, UAE, building web applications, ERP systems, and practical business tools. From React interfaces to NestJS APIs and PostgreSQL databases, I care about clear workflows and software that helps people get things done.
         </Hand>
-        <HandUnderline width={120} class="bio-underline" />
+        <HandUnderline width={120} class="bio-underline" /><div class="see-all"><HandLink href="/about/" color={NB.redInk}><Hand size={22} color={NB.redInk}>More about me & my experience →</Hand></HandLink></div>
       </div>
     </section>
 
-    {/* ════════════════════════════════════════
-        EXPERIENCE + EDUCATION/SKILLS (2-col on desktop)
-    ════════════════════════════════════════ */}
-    <div class="exp-edu-grid section" data-reveal>
-
-      {/* Experience */}
-      <div class="exp-col">
-        <div class="section-title">
-          <StickyNote color={NB.yellow} rotate={2} inline>
-            <Marker size={"clamp(26px, 3vw, 34px)"}>Experience</Marker>
-          </StickyNote>
-        </div>
-        <div class="exp-rows">
-          {allExperience.map((entry) => (
-            <div class="exp-row">
-              <Mono size={9} as="div" class="exp-year">{entry.data.year}</Mono>
-              <div class="exp-body">
-                <Hand size={"clamp(20px, 2vw, 26px)"} weight={600} as="div" class="exp-role">{entry.data.role}</Hand>
-                {entry.data.url ? (
-                  <HandLink
-                    href={entry.data.url}
-                    color={NB.pencil}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="exp-place-link"
-                  >
-                    <Hand size={"clamp(15px, 1.5vw, 18px)"} color={NB.pencil} as="span" class="exp-place">{entry.data.place}</Hand>
-                  </HandLink>
-                ) : (
-                  <Hand size={"clamp(15px, 1.5vw, 18px)"} color={NB.pencil} as="div" class="exp-place">{entry.data.place}</Hand>
-                )}
-                <Hand size={"clamp(15px, 1.5vw, 18px)"} color={NB.inkSoft} as="div" class="exp-desc">{entry.data.desc}</Hand>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Education + Skills */}
-      <div class="edu-skills-col">
-        {/* Education */}
-        <div class="edu-block">
-        <div class="section-title">
-          <StickyNote color={NB.yellow} rotate={-2} inline>
-            <Marker size={"clamp(26px, 3vw, 34px)"}>Education</Marker>
-          </StickyNote>
-        </div>
-        <div class="exp-rows">
-          {allEducation.map((entry) => (
-            <div class="exp-row">
-              <Mono size={9} as="div" class="exp-year">{entry.data.year}</Mono>
-              <div class="exp-body">
-                <Hand size={"clamp(20px, 2vw, 26px)"} weight={600} as="div" class="exp-role">{entry.data.role}</Hand>
-                <Hand size={"clamp(15px, 1.5vw, 18px)"} color={NB.pencil} as="div" class="exp-place">{entry.data.place}</Hand>
-                <Hand size={"clamp(15px, 1.5vw, 18px)"} color={NB.inkSoft} as="div" class="exp-desc">{entry.data.desc}</Hand>
-              </div>
-            </div>
-          ))}
-        </div>
-        </div>
-
-        {/* Good At */}
-        <div class="skills-wrap">
-          <div class="section-title">
-            <StickyNote color={NB.yellow} rotate={3} inline>
-              <Marker size={"clamp(26px, 3vw, 34px)"}>Good At</Marker>
+    <section class="section services-preview" aria-labelledby="services-heading" data-reveal>
+      <h2 id="services-heading" class="section-title"><StickyNote color={NB.yellow} rotate={2} inline><Marker size="clamp(26px, 3vw, 34px)">How I can help</Marker></StickyNote></h2>
+      <div class="services-preview-grid">
+        {services.slice(0, 3).map((service, i) => (
+          <a href={`/services/#${service.id}`} class="service-note">
+            <StickyNote color={swatch(service.color)} rotate={i % 2 ? 1.5 : -1.5}>
+              <Mono size={10}>0{i + 1} / services</Mono>
+              <Hand size={26} as="h3" weight={700}>{service.title}</Hand>
+              <Hand size={19} as="p">{service.summary}</Hand>
+              <Hand size={20}>Let's build it →</Hand>
             </StickyNote>
-          </div>
-          <ul class="skills-list">
-            {allSkills.map((skill) => (
-              <li class="skill-item">
-                <Doodle kind="check" size={16} color={NB.red} class="skill-check" />
-                <div class="skill-chips">
-                  {skill.data.label.split(',').map((part) => (
-                    <span class="skill-chip">
-                      <Hand size={"clamp(15px, 1.5vw, 18px)"}>{part.trim()}</Hand>
-                    </span>
-                  ))}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+          </a>
+        ))}
       </div>
-
-    </div>
+      <div class="see-all"><HandLink href="/services/" color={NB.redInk}><Hand size={22} color={NB.redInk}>All software development services →</Hand></HandLink></div>
+    </section>
 
     {/* ════════════════════════════════════════
         FEATURED WORK
     ════════════════════════════════════════ */}
     <section class="section featured-section" data-reveal>
-      <div class="section-title">
+      <h2 class="section-title">
         <StickyNote color={NB.yellow} rotate={-1.5} inline>
           <Marker size={"clamp(26px, 3vw, 34px)"}>Featured Work</Marker>
         </StickyNote>
-      </div>
+      </h2>
       <div class="project-grid">
         {featuredProjects.map((project) => (
-          <a href={`/projects/${project.id}`} class="project-card-link">
+          <a href={`/case-studies/${project.id}/`} class="project-card-link">
             <div class="project-card">
               <HandBox rounded width={380} height={156} />
               <div class="project-card-content">
@@ -289,7 +193,7 @@ function formatBlogDate(iso: string): string {
                   />
                   <div class="project-card-meta">
                     <Mono size={9} as="div">{project.data.tag}</Mono>
-                    <Hand size={"clamp(20px, 2.5vw, 28px)"} weight={600} as="div" class="project-title">{project.data.title}</Hand>
+                    <Hand size={"clamp(20px, 2.5vw, 28px)"} weight={600} as="h3" class="project-title">{project.data.title}</Hand>
                   </div>
                 </div>
                 <Hand size={"clamp(17px, 1.8vw, 20px)"} color={NB.inkSoft} as="div" class="project-desc">{project.data.summary}</Hand>
@@ -299,49 +203,21 @@ function formatBlogDate(iso: string): string {
         ))}
       </div>
       <div class="see-all">
-        <HandLink href="/projects" color={NB.redInk}>
-          <Hand size={"clamp(20px, 2vw, 24px)"} color={NB.redInk}>see all projects →</Hand>
+        <HandLink href="/case-studies/" color={NB.redInk}>
+          <Hand size={"clamp(20px, 2vw, 24px)"} color={NB.redInk}>see all case studies →</Hand>
         </HandLink>
       </div>
     </section>
 
     {/* ════════════════════════════════════════
-        GALLERY PREVIEW
-    ════════════════════════════════════════ */}
-    {allGallery.length > 0 && (<section class="section gallery-section" data-reveal>
-      <div class="section-title">
-        <StickyNote color={NB.yellow} rotate={2} inline>
-          <Marker size={"clamp(26px, 3vw, 34px)"}>Gallery</Marker>
-        </StickyNote>
-      </div>
-      <div class="gallery-grid">
-        {allGallery.map((item, i) => (
-          <PhotoCutout
-            width="100%"
-            height={item.data.height ?? (i % 2 === 0 ? 110 : 140)}
-            rotate={item.data.rotate ?? galleryRots[i % galleryRots.length]}
-            label={item.data.label}
-            src={item.data.image ?? undefined}
-            alt={item.data.label}
-          />
-        ))}
-      </div>
-      <div class="see-all">
-        <HandLink href="/gallery" color={NB.redInk}>
-          <Hand size={"clamp(20px, 2vw, 24px)"} color={NB.redInk}>open gallery →</Hand>
-        </HandLink>
-      </div>
-    </section>)}
-
-    {/* ════════════════════════════════════════
         MINI BLOG
     ════════════════════════════════════════ */}
     {allBlogLinks.length > 0 && (<section class="section blog-section" data-reveal>
-      <div class="section-title">
+      <h2 class="section-title">
         <StickyNote color={NB.yellow} rotate={-3} inline>
-          <Marker size={"clamp(26px, 3vw, 34px)"}>Mini Blog</Marker>
+          <Marker size={"clamp(26px, 3vw, 34px)"}>From my notebook</Marker>
         </StickyNote>
-      </div>
+      </h2>
       <div class="blog-list">
         {allBlogLinks.map((post) => (
           <div class="blog-row">
@@ -358,68 +234,33 @@ function formatBlogDate(iso: string): string {
         ))}
       </div>
       <div class="see-all">
-        <HandLink href="/blog" color={NB.redInk}>
+        <HandLink href="/blogs/" color={NB.redInk}>
           <Hand size={"clamp(20px, 2vw, 24px)"} color={NB.redInk}>all posts →</Hand>
         </HandLink>
       </div>
     </section>)}
 
-    {/* ════════════════════════════════════════
-        CONTACT + FOOTER
-    ════════════════════════════════════════ */}
-    <section id="contact" class="section contact-section" data-reveal>
-      <div class="contact-heading-row">
-        <Marker size={"clamp(32px, 5vw, 48px)"}>Say hi.</Marker>
-        <HandArrow
-          direction="down-right"
-          length={50}
-          class="contact-arrow"
-        />
-      </div>
-      <Hand size={"clamp(20px, 2.2vw, 26px)"} color={NB.inkSoft} as="p" class="contact-subline">
-        I'm always up for a chat about code, the web, or weird projects.
-      </Hand>
-
-      <div class="contact-grid">
-        {profile.contacts.map((contact) => (
-          <a href={contact.url} target="_blank" rel="noopener noreferrer" class="contact-sticky-link">
-            <StickyNote color={swatch(contact.color)} rotate={contact.color === 'yellow' ? -3 : contact.color === 'pink' ? 2 : contact.color === 'blue' ? 1.5 : -2} class="contact-sticky">
-              <div class="contact-sticky-inner">
-                <span class="contact-icon" aria-hidden="true">
-                  {contact.sub === 'whatsapp' ? (
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20.52 3.48A11.9 11.9 0 0 0 12.05 0C5.46 0 .1 5.36.1 11.95c0 2.1.55 4.16 1.6 5.98L0 24l6.25-1.64a11.95 11.95 0 0 0 5.8 1.48h.01C18.65 23.84 24 18.48 24 11.9c0-3.19-1.24-6.18-3.48-8.42ZM12.06 21.82h-.01a9.9 9.9 0 0 1-5.05-1.38l-.36-.22-3.71.97.99-3.62-.24-.37a9.91 9.91 0 0 1-1.52-5.25c0-5.48 4.46-9.94 9.95-9.94a9.87 9.87 0 0 1 7.03 2.91 9.87 9.87 0 0 1 2.91 7.03c0 5.48-4.46 9.87-9.99 9.87Zm5.45-7.44c-.3-.15-1.77-.87-2.04-.97-.28-.1-.48-.15-.68.15s-.77.97-.95 1.17c-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.18-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.69.25-1.29.17-1.42-.07-.12-.27-.2-.57-.34Z" />
-                    </svg>
-                  ) : contact.sub === 'instagram' ? (
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="3" width="18" height="18" rx="5" />
-                      <circle cx="12" cy="12" r="4" />
-                      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-                    </svg>
-                  ) : contact.icon}
-                </span>
-                <div class:list={['contact-text', { 'contact-text-email': contact.sub === 'email' }]}>
-                  <Mono size={9} as="div">{contact.sub}</Mono>
-                  <Hand size={contact.sub === 'email' ? 'min(20px, 7cqi)' : 'clamp(17px, 1.8vw, 20px)'} as="div">{contact.label}</Hand>
-                </div>
-              </div>
-            </StickyNote>
-          </a>
-        ))}
-      </div>
-
-      {/* Footer */}
-      <footer class="footer">
-        <Mono size={9} as="span" class="footer-left">{profile.footerNote}</Mono>
-        <Hand size={22} color={NB.pencil} as="span" class="footer-right">end of page ✦</Hand>
-      </footer>
+    <section id="contact" class="section contact-section" aria-labelledby="contact-heading" data-reveal>
+      <div class="contact-heading-row"><Marker as="h2" id="contact-heading" size="clamp(32px, 5vw, 48px)">Say hi.</Marker><HandArrow direction="down-right" length={50} class="contact-arrow" /></div>
+      <Hand size="clamp(20px, 2.2vw, 26px)" color={NB.inkSoft} as="p" class="contact-subline">Have a project, a role, or a software problem in mind? I'd love to hear about it.</Hand>
+      <a class="resume-link" href="/contact/">Start a conversation →</a>
+      <HandLink href="mailto:joyalvarghese458@gmail.com" class="contact-email"><Hand size={20}>Or send me an email ↗</Hand></HandLink>
     </section>
 
   </GridPaper>
 </Base>
 
 <style>
-.resume-link { display: inline-block; margin-top: 18px; padding: 8px 14px; background: var(--nb-yellow, #ffe45c); border: 1.5px solid currentColor; border-radius: 5px; color: #1a1a1a; font-family: "JetBrains Mono", monospace; font-size: 12px; text-decoration: none; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 0 12px; }
+.resume-secondary { background: transparent !important; }
+.contact-email { margin-left: 18px; padding: 12px 0; }
+.services-preview-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; margin-top: 16px; }
+.service-note { text-decoration: none; min-width: 0; }
+.service-note :global(.nb-sticky) { display: block; height: 100%; padding: 24px; }
+.service-note :global(h3) { margin: 12px 0 8px; }
+.service-note :global(p) { margin: 0 0 18px; }
+@media (min-width: 880px) { .services-preview-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.resume-link { display: inline-block; margin-top: 18px; padding: 8px 14px; background: var(--nb-yellow, #ffe45c); border: 1.5px solid currentColor; border-radius: 5px; color: #1a1a1a; font-family: "JetBrains Mono", monospace; font-size: 12px; text-decoration: none; min-height: 44px; align-content: center; }
 .resume-link:hover { transform: rotate(-1deg); }
 .resume-link:focus-visible { outline: 3px solid #1a1a1a; outline-offset: 4px; }
 /* ────────────────────────────────────────────────────────────────────────────
@@ -448,28 +289,6 @@ function formatBlogDate(iso: string): string {
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-   TOP NAV: desktop only
-──────────────────────────────────────────────────────────────────────────── */
-.top-nav {
-  display: none;
-}
-
-@media (min-width: 880px) {
-  .top-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px var(--nb-pad) 0;
-  }
-}
-
-.top-nav-links {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-}
-
-/* ────────────────────────────────────────────────────────────────────────────
    SHARED SECTION WRAPPER
 ──────────────────────────────────────────────────────────────────────────── */
 .section {
@@ -478,6 +297,7 @@ function formatBlogDate(iso: string): string {
 }
 
 .section-title {
+  margin-top: 0;
   display: inline-block;
   margin-bottom: 14px;
 }
@@ -750,191 +570,6 @@ function formatBlogDate(iso: string): string {
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-   EXPERIENCE / EDUCATION / SKILLS
-──────────────────────────────────────────────────────────────────────────── */
-.exp-edu-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
-}
-
-/* Experience runs the full width; education and skills share a row beneath it. */
-@media (min-width: 880px) {
-  .exp-edu-grid {
-    grid-template-columns: 1fr;
-    gap: 48px;
-    padding-top: 36px;
-  }
-
-  .edu-skills-col {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 60px;
-    align-items: start;
-  }
-
-  /* Already spaced by the grid row gap once it sits in its own column. */
-  .skills-wrap {
-    margin-top: 0;
-  }
-}
-
-/* Wide screens: experience entries run two across, so the full-width block
-   actually uses the width instead of leaving the right half empty. Scoped to
-   .exp-col — education shares .exp-rows but sits in a narrow column. */
-@media (min-width: 1040px) {
-  .exp-col .exp-rows {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 56px;
-  }
-
-  /* The single-column rule strips the rule off the final entry; in a grid the
-     last item sits mid-row, so it keeps its underline like the rest. */
-  .exp-col .exp-row:last-child {
-    border-bottom: 1px dashed rgba(90, 90, 90, 0.22);
-    padding-bottom: 24px;
-    margin-bottom: 24px;
-  }
-}
-
-.exp-col,
-.edu-skills-col {
-  padding-top: 28px;
-}
-
-@media (min-width: 880px) {
-  .exp-col,
-  .edu-skills-col {
-    padding-top: 0;
-  }
-}
-
-.exp-rows {
-  margin-top: 4px;
-}
-
-/* One entry per band, separated by a faint rule. Entries previously ran
-   together at 14px apart with no divider, which is what made the column
-   read as a wall of handwriting. */
-.exp-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding: 0 4px 20px;
-  border-bottom: 1px dashed rgba(90, 90, 90, 0.22);
-}
-
-.exp-row:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-  margin-bottom: 0;
-}
-
-@media (min-width: 880px) {
-  .exp-row {
-    gap: 18px;
-    margin-bottom: 24px;
-    padding-bottom: 24px;
-  }
-}
-
-.exp-year {
-  flex: 0 0 64px;
-  padding-top: 2px;
-}
-
-@media (min-width: 880px) {
-  .exp-year {
-    flex: 0 0 90px;
-    padding-top: 4px;
-  }
-}
-
-.exp-body {
-  flex: 1;
-}
-
-.exp-role {
-  display: block;
-  line-height: 1.2;
-}
-
-.exp-place {
-  display: block;
-  margin-top: 1px;
-}
-
-/* The linked variant: anchor carries the block spacing the div had. */
-.exp-place-link {
-  display: inline-block;
-  margin-top: 1px;
-}
-
-.exp-place-link .exp-place {
-  display: inline;
-  margin-top: 0;
-}
-
-/* Cap the measure: full-column handwriting lines are hard to track back to
-   the next line. ~54 characters keeps it comfortable. */
-.exp-desc {
-  display: block;
-  margin-top: 8px;
-  line-height: 1.55;
-  max-width: 54ch;
-}
-
-/* Skills */
-.skills-wrap {
-  margin-top: 28px;
-}
-
-@media (min-width: 880px) {
-  .skills-wrap {
-    margin-top: 32px;
-  }
-}
-
-/* Single column: two columns of comma-separated lists wrapped mid-list, so
-   "JavaScript, TypeScript, Python" broke across a column boundary. */
-.skills-list {
-  margin: 6px 0 0;
-  padding: 0 0 0 4px;
-  list-style: none;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-.skill-item {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-}
-
-.skill-check {
-  flex-shrink: 0;
-  margin-top: 6px;
-}
-
-.skill-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 7px;
-  line-height: 0;
-}
-
-.skill-chip {
-  display: inline-block;
-  padding: 1px 10px 3px;
-  border: 1.5px solid rgba(90, 90, 90, 0.4);
-  border-radius: 999px;
-  background: var(--nb-paper);
-  line-height: 1.4;
-}
-
-/* ────────────────────────────────────────────────────────────────────────────
    FEATURED WORK
 ──────────────────────────────────────────────────────────────────────────── */
 .featured-section {
@@ -1010,40 +645,12 @@ function formatBlogDate(iso: string): string {
 .project-title {
   display: block;
   line-height: 1.1;
-  margin-top: 2px;
+  margin: 2px 0 0;
 }
 
 .project-desc {
   display: block;
   margin-top: 4px;
-}
-
-/* ────────────────────────────────────────────────────────────────────────────
-   GALLERY PREVIEW
-──────────────────────────────────────────────────────────────────────────── */
-.gallery-section {
-  padding-top: 24px;
-}
-
-@media (min-width: 880px) {
-  .gallery-section {
-    padding-top: 60px;
-  }
-}
-
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-top: 4px;
-}
-
-@media (min-width: 880px) {
-  .gallery-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-    margin-top: 8px;
-  }
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -1148,108 +755,4 @@ function formatBlogDate(iso: string): string {
   margin: 4px 0 0;
 }
 
-.contact-grid {
-  margin-top: 28px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-  gap: 10px;
-}
-
-@media (min-width: 880px) {
-  .contact-grid {
-    gap: 16px;
-    margin-top: 30px;
-  }
-}
-
-.contact-sticky-link {
-  min-width: 0;
-  text-decoration: none;
-  color: inherit;
-  display: block;
-}
-
-.contact-text {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.contact-text-email {
-  flex: 1;
-  container-type: inline-size;
-  white-space: nowrap;
-  overflow-wrap: normal;
-}
-
-.contact-sticky {
-  padding: 10px 12px 12px !important;
-  width: 100%;
-}
-
-@media (min-width: 880px) {
-  .contact-sticky {
-    padding: 14px 16px 18px !important;
-  }
-}
-
-.contact-sticky-inner {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-@media (min-width: 880px) {
-  .contact-sticky-inner {
-    gap: 10px;
-  }
-}
-
-.contact-icon {
-  font-family: "Kalam", cursive;
-  font-size: clamp(18px, 2vw, 22px);
-  font-weight: 700;
-  width: clamp(24px, 3vw, 34px);
-  height: clamp(24px, 3vw, 34px);
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.08);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.contact-text {
-  min-width: 0;
-}
-
-/* ────────────────────────────────────────────────────────────────────────────
-   FOOTER
-──────────────────────────────────────────────────────────────────────────── */
-.footer {
-  margin-top: 28px;
-  padding-top: 20px;
-  border-top: 1.5px dashed var(--nb-pencil);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  text-align: center;
-}
-
-@media (min-width: 880px) {
-  .footer {
-    margin-top: 40px;
-    flex-direction: row;
-    justify-content: space-between;
-    text-align: left;
-  }
-}
-
-.footer-left {
-  color: var(--nb-pencil);
-}
-
-.footer-right {
-  color: var(--nb-pencil);
-}
 </style>

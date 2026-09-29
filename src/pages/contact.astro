@@ -1,0 +1,88 @@
+---
+import Base from '../layouts/Base.astro';
+import GridPaper from '../components/GridPaper.astro';
+import Marker from '../components/Marker.astro';
+import Hand from '../components/Hand.astro';
+import Mono from '../components/Mono.astro';
+import Highlight from '../components/Highlight.astro';
+import StickyNote from '../components/StickyNote.astro';
+import HandBox from '../components/HandBox.astro';
+import HandLink from '../components/HandLink.astro';
+import ContactCards from '../components/ContactCards.astro';
+import profile from '../content/profile/main.json';
+import { NB } from '../lib/notebook';
+const email = profile.contacts.find((contact) => contact.sub === 'email')!;
+---
+<Base title="Contact Joyal Varghese | Software Developer in UAE" description="Contact Joyal Varghese, software developer in Sharjah, UAE, about web applications, ERP projects or opportunities. Connect by email, phone or WhatsApp.">
+  <GridPaper size={22}>
+    <div class="contact-page">
+      <header>
+        <Mono size={10} as="p" class="eyebrow">Every good project starts with a conversation</Mono>
+        <Marker as="h1" size="clamp(44px, 8vw, 72px)" class="page-title">Say hi.</Marker>
+        <Hand size="clamp(22px, 2.6vw, 28px)" as="p" class="intro">Looking for a <Highlight>software developer</Highlight>? Let's talk.</Hand>
+        <Hand size="clamp(19px, 2vw, 23px)" color={NB.inkSoft} as="p" class="intro-copy">I'm based in Sharjah, UAE. Whether you're planning a web application, improving a business workflow, or discussing a role, tell me what you have in mind.</Hand>
+      </header>
+      <section aria-labelledby="connect-heading" class="connect-section">
+        <h2 id="connect-heading" class="section-heading"><StickyNote color={NB.yellow} rotate={-2} inline><Marker size="clamp(25px, 3vw, 34px)">Find me here</Marker></StickyNote></h2>
+        <ContactCards />
+      </section>
+      <section class="message-section" aria-labelledby="message-heading">
+        <div class="message-intro">
+          <Marker as="h2" id="message-heading" size="clamp(28px, 4vw, 40px)" class="message-title">A note about your idea.</Marker>
+          <Hand size={21} as="p">A few details help me understand where to start:</Hand>
+          <ul><li>What are you building or improving?</li><li>Who will use it?</li><li>What help do you need, and when?</li></ul>
+          <HandLink href="/services/" color={NB.redInk}><Hand size={22} color={NB.redInk}>See how I can help →</Hand></HandLink>
+        </div>
+        <div class="draft-panel">
+          <HandBox rounded width={450} height={500} />
+          <form action="https://formspree.io/f/mvkgdwwo" method="POST" aria-labelledby="message-heading" aria-describedby="form-help">
+            <p id="form-help">Send me a note here. Your message goes through Formspree to my inbox.</p>
+            <div class="spam-trap" aria-hidden="true">
+              <label for="contact-website">Leave this field empty</label>
+              <input id="contact-website" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+            <label for="contact-name">Your name</label>
+            <input id="contact-name" name="name" autocomplete="name" required minlength="2" maxlength="100" />
+            <label for="contact-email">Your email</label>
+            <input id="contact-email" name="email" type="email" autocomplete="email" required maxlength="254" />
+            <label for="contact-topic">What's it about?</label>
+            <select id="contact-topic" name="topic"><option>Web application</option><option>ERP or business tool</option><option>API or database</option><option>E-commerce website</option><option>Job opportunity</option><option>Something else</option></select>
+            <label for="contact-message">Your message</label>
+            <textarea id="contact-message" name="message" rows="5" required minlength="10" maxlength="1500" placeholder="A little about your idea, the people using it, and your timeline…"></textarea>
+            <button type="submit">Send message ↗</button>
+            <p class="form-alternative">Prefer email? <a href={email.url}>Write to me directly</a>.</p>
+          </form>
+        </div>
+      </section>
+    </div>
+  </GridPaper>
+</Base>
+<style>
+  .contact-page { max-width: 1280px; margin: 0 auto; padding: 28px var(--nb-pad) 52px; }
+  .eyebrow { margin: 0 0 14px; line-height: 1.7; }
+  .page-title, .message-title { margin: 0; }
+  .intro { margin: 18px 0 12px; }
+  .intro-copy { max-width: 760px; margin: 0; }
+  .connect-section { margin-top: 36px; }
+  .section-heading { margin: 0 0 30px; }
+  .message-section { display: grid; gap: 28px; margin-top: 48px; }
+  .message-intro ul { padding-left: 24px; font-size: 20px; line-height: 1.7; }
+  .message-intro :global(a) { min-height: 44px; padding: 8px 0; }
+  .draft-panel { position: relative; padding: 24px 20px; }
+  form { position: relative; }
+  form p { margin: 0 0 20px; font-size: 18px; }
+  .spam-trap { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  label { display: block; font-size: 20px; margin-bottom: 5px; }
+  input, textarea, select { display: block; width: 100%; min-width: 0; min-height: 48px; margin-bottom: 18px; padding: 9px 12px; border: 1.5px solid var(--nb-pencil); border-radius: 3px; color: var(--nb-ink); background: rgba(251,250,245,.8); font-size: 18px; }
+  textarea { resize: vertical; }
+  button { min-height: 48px; padding: 10px 18px; border: 1.5px solid var(--nb-ink); border-radius: 4px; background: var(--nb-yellow); color: var(--nb-ink); font-size: 20px; cursor: pointer; }
+  button:hover { transform: rotate(-1deg); }
+  .form-alternative { margin: 18px 0 0; }
+  .form-alternative a { text-underline-offset: 4px; }
+  @media (min-width: 880px) {
+    .contact-page { padding-top: 40px; padding-bottom: 64px; }
+    .connect-section { margin-top: 44px; }
+    .message-section { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 50px; margin-top: 64px; }
+    .draft-panel { padding: 30px; }
+  }
+</style>

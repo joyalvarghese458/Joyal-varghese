@@ -1,0 +1,418 @@
+---
+import { getBlogPosts } from '../lib/blog';
+import Base from '../layouts/Base.astro';
+import GridPaper from '../components/GridPaper.astro';
+import Hand from '../components/Hand.astro';
+import HandLink from '../components/HandLink.astro';
+import HandBox from '../components/HandBox.astro';
+import Marker from '../components/Marker.astro';
+import Mono from '../components/Mono.astro';
+import StickyNote from '../components/StickyNote.astro';
+import { NB } from '../lib/notebook';
+
+// ── Date helpers ──────────────────────────────────────────────────────────
+const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+/** "2026-05-12" → "MAY 12, 2026" */
+function formatDateLong(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  return `${MONTHS[m - 1]} ${d}, ${y}`;
+}
+
+/** "2026-05-12" → "MAY 12" (compact, for tight spaces) */
+function formatDateShort(iso: string): string {
+  const [, m, d] = iso.split('-').map(Number);
+  return `${MONTHS[m - 1]} ${d}`;
+}
+
+// ── Data ──────────────────────────────────────────────────────────────────
+const allPosts = await getBlogPosts();
+
+// Sort newest first
+const sorted = allPosts.sort((a, b) =>
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// Featured post: the one flagged featured:true, else the newest
+const featuredEntry =
+  sorted.find((p) => p.data.featured) ?? sorted[0];
+
+// Rest: everything that is NOT the featured post
+const restPosts = sorted.filter((p) => p.id !== featuredEntry?.id);
+
+// Unique tags (preserve insertion order, deduplicated)
+const uniqueTags = [...new Set(sorted.map((p) => p.data.tag))];
+
+// Tag chip rotations: cycle through preset values
+const chipRots = [-1, 1, -0.5, 1, -1, 0.5, -0.8, 0.6, -0.4, 0.9];
+
+const featured = featuredEntry?.data;
+const structuredData = {
+  '@context': 'https://schema.org', '@type': 'Blog',
+  name: 'Software Developer Blog by Joyal Varghese',
+  url: Astro.site ? new URL('/blogs/', Astro.site).href : undefined,
+  description: 'Notes on software development, ERP workflows, React interfaces, and responsive websites.',
+  author: { '@type': 'Person', name: 'Joyal Varghese', url: Astro.site ? new URL('/about/', Astro.site).href : undefined },
+  blogPost: sorted.map(({ data }) => ({
+    '@type': 'BlogPosting', headline: data.title, datePublished: data.date,
+    url: Astro.site ? new URL(data.url, Astro.site).href : data.url,
+  })),
+};
+---
+
+<Base title="Software Developer Blog | Joyal Varghese" description="Read Joyal Varghese's software developer blog: practical notes on ERP workflows, React interfaces, e-commerce, and full stack development in the UAE." structuredData={structuredData}>
+  <GridPaper size={22} class="blog-root">
+
+    {/* ─── Header ─── */}
+    <header class="detail-header">
+      <div class="detail-header-left">
+        <HandLink href="/" color={NB.pencil}>
+          <Hand size={18} color={NB.pencil}>← back to home</Hand>
+        </HandLink>
+        <Marker size="clamp(36px, 7vw, 60px)" as="h1" style="display:block; margin-top:2px;">Blogs.</Marker>
+      </div>
+      <Mono size={9} class="detail-header-tag">joyal.varghese</Mono>
+    </header>
+
+    {/* ─── Content ─── */}
+    <div class="blog-body">
+      {allPosts.length === 0 && <Hand size={24} as="p">New writing will appear here.</Hand>}
+
+      <Hand size={19} color={NB.inkSoft} as="p" class="blog-intro">
+        Notes from my work as a software developer in the UAE. Business workflows, thoughtful interfaces, and the details behind useful software.
+      </Hand>
+
+      {/* ─── Tag chips ─── */}
+      <div class="tag-row" data-blog-filters role="group" aria-label="Filter posts by topic" hidden>
+        {/* "all" chip: always yellow */}
+        <button
+          type="button"
+          data-blog-filter="all"
+          aria-pressed="true"
+          aria-controls="blog-results"
+          class="tag-chip tag-chip--active"
+          style={`transform: rotate(${chipRots[0]}deg);`}
+        >
+          #all
+        </button>
+        {uniqueTags.map((t, i) => (
+          <button
+            type="button"
+            data-blog-filter={t}
+            aria-pressed="false"
+            aria-controls="blog-results"
+            class="tag-chip"
+            style={`transform: rotate(${chipRots[(i + 1) % chipRots.length]}deg);`}
+          >
+            #{t}
+          </button>
+        ))}
+      </div>
+      <p class="filter-status" data-blog-count role="status" hidden></p>
+
+      <div id="blog-results">
+      {/* ─── Featured post ─── */}
+      {featuredEntry && featured && (
+        <article class="featured-wrap" data-blog-post={featured.tag} data-reveal>
+          <HandBox width={800} height={200} rounded strokeWidth={2.4} />
+          <div class="featured-inner">
+            <div class="featured-meta">
+              <StickyNote color={NB.yellow} rotate={-3} inline peel class="latest-chip">
+                <Hand size={16} weight={700}>★ featured</Hand>
+              </StickyNote>
+              <Mono size={9} as="time" datetime={featured.date}>{formatDateLong(featured.date)}</Mono>
+              <Mono size={9}>#{featured.tag}</Mono>
+              <Mono size={9} color={NB.pencil}>{featured.readMinutes} min read</Mono>
+            </div>
+            <HandLink href={featuredEntry.data.url} target={featuredEntry.data.url.startsWith('/') ? undefined : '_blank'} rel={featuredEntry.data.url.startsWith('/') ? undefined : 'noopener noreferrer'} class="featured-title-link">
+              <Hand size="clamp(22px, 4vw, 36px)" weight={600} as="h2" class="featured-title">
+                {featured.title}
+              </Hand>
+            </HandLink>
+            {featured.excerpt && (
+              <Hand size={18} color={NB.inkSoft} as="p" class="featured-excerpt">
+                {featured.excerpt}
+              </Hand>
+            )}
+          </div>
+        </article>
+      )}
+
+      {/* ─── Rest of posts ─── */}
+      {restPosts.length > 0 && (
+        <ul class="posts-list">
+          {restPosts.map((p, i) => (
+            <li
+              class="post-row"
+              data-blog-post={p.data.tag}
+              style={i === restPosts.length - 1 ? 'border-bottom: none;' : ''}
+              data-reveal
+            >
+              <Mono size={9} as="time" datetime={p.data.date} class="post-date post-date--long">{formatDateLong(p.data.date)}</Mono>
+              <Mono size={9} as="time" datetime={p.data.date} class="post-date post-date--short">{formatDateShort(p.data.date)}</Mono>
+              <div class="post-content">
+                <HandLink href={p.data.url} target={p.data.url.startsWith('/') ? undefined : '_blank'} rel={p.data.url.startsWith('/') ? undefined : 'noopener noreferrer'}>
+                  <Hand size="clamp(20px, 3vw, 24px)" weight={600} as="h2" class="post-title">{p.data.title}</Hand>
+                </HandLink>
+                <div class="post-sub">
+                  <Mono size={9}>#{p.data.tag}</Mono>
+                  <Mono size={9} color={NB.pencil}>{p.data.readMinutes} min read</Mono>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      </div>
+
+    </div>
+  </GridPaper>
+</Base>
+
+<script>
+  function initBlogFilters() {
+    const filters = document.querySelector<HTMLElement>('[data-blog-filters]');
+    if (!filters || filters.dataset.ready) return;
+    const posts = [...document.querySelectorAll<HTMLElement>('[data-blog-post]')];
+    const buttons = [...filters.querySelectorAll<HTMLButtonElement>('[data-blog-filter]')];
+    const count = document.querySelector<HTMLElement>('[data-blog-count]');
+    if (!posts.length) return;
+    filters.dataset.ready = 'true';
+    filters.hidden = false;
+    function selectTag(tag: string, announce = true) {
+      let visible = 0;
+      for (const post of posts) {
+        post.hidden = tag !== 'all' && post.dataset.blogPost !== tag;
+        if (!post.hidden) {
+          visible++;
+          post.classList.add('is-revealed');
+        }
+      }
+      for (const button of buttons) {
+        const active = button.dataset.blogFilter === tag;
+        button.setAttribute('aria-pressed', String(active));
+        button.classList.toggle('tag-chip--active', active);
+      }
+      if (count && announce) {
+        count.hidden = false;
+        count.textContent = `${visible} ${visible === 1 ? 'post' : 'posts'}${tag === 'all' ? ' in the notebook' : ` about ${tag}`}`;
+      }
+    }
+    for (const button of buttons) {
+      button.addEventListener('click', () => selectTag(button.dataset.blogFilter ?? 'all'));
+    }
+  }
+  document.addEventListener('astro:page-load', initBlogFilters);
+</script>
+
+<style>
+  .blog-root {
+    min-height: 100vh;
+  }
+
+  /* ─── Header ─── */
+  .detail-header {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 16px var(--nb-pad) 14px;
+    border-bottom: 1.5px dashed var(--nb-pencil);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .detail-header-left {
+    flex: 1;
+  }
+
+  .detail-header-tag {
+    display: none;
+    padding-bottom: 6px;
+  }
+
+  /* ─── Body ─── */
+  .blog-body {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 16px var(--nb-pad) 60px;
+  }
+
+  .blog-intro {
+    display: block;
+    margin: 0 0 8px;
+  }
+
+  /* ─── Tag chips ─── */
+  .tag-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .tag-chip {
+    font-family: 'Kalam', cursive;
+    font-size: 17px;
+    min-height: 44px;
+    padding: 5px 12px;
+    border: 1.5px solid var(--nb-pencil);
+    color: var(--nb-ink);
+    cursor: pointer;
+    border-radius: 999px;
+    background: transparent;
+    display: inline-block;
+    line-height: 1.5;
+  }
+
+  .tag-chip--active {
+    background: var(--nb-yellow);
+    border-color: transparent;
+  }
+  .tag-chip:focus-visible { outline: 2px solid var(--nb-ink); outline-offset: 4px; }
+  .tag-row[hidden], [data-blog-post][hidden], .filter-status[hidden] { display: none; }
+  .filter-status { font-family: 'JetBrains Mono', monospace; font-size: 11px; margin: -4px 0 18px; color: var(--nb-pencil); }
+
+  /* ─── Featured post ─── */
+  .featured-wrap {
+    position: relative;
+    padding: 18px 20px 22px;
+    margin-bottom: 24px;
+  }
+
+  .featured-inner {
+    position: relative;
+  }
+
+  .featured-meta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+
+  .latest-chip {
+    /* inline sticky, displayed via inline prop */
+  }
+
+  .featured-title-link {
+    display: block;
+  }
+
+  .featured-title {
+    display: block;
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .featured-excerpt {
+    display: block;
+    margin: 6px 0 0;
+  }
+
+  /* ─── Post list ─── */
+  .posts-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .post-row {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    padding: 12px 4px;
+    border-bottom: 1px dashed var(--nb-pencil);
+  }
+  .post-title { margin: 0; line-height: 1.4; }
+
+  .post-date {
+    flex: 0 0 76px;
+  }
+
+  /* On mobile show long date, hide short */
+  .post-date--short {
+    display: none;
+  }
+
+  .post-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .post-sub {
+    margin-top: 2px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* ─── Desktop overrides ─── */
+  @media (min-width: 880px) {
+    .detail-header {
+      padding: 20px 60px 16px;
+      border-bottom-width: 1.8px;
+    }
+
+    .detail-header-tag {
+      display: inline;
+      padding-bottom: 10px;
+    }
+
+    .blog-body {
+      padding: 20px 60px 60px;
+    }
+
+    .blog-intro {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .tag-row {
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .tag-chip {
+      font-size: 22px;
+      padding: 1px 12px;
+    }
+
+    /* Featured */
+    .featured-wrap {
+      padding: 24px 28px 28px;
+      margin-bottom: 30px;
+    }
+
+    .featured-meta {
+      gap: 10px;
+    }
+
+    .featured-excerpt {
+      max-width: 900px;
+    }
+
+    /* Posts: 2 columns desktop */
+    .posts-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 60px;
+    }
+
+    .post-row {
+      padding: 14px 4px;
+    }
+
+    /* On desktop swap to short date to match design (space tight in 2-col) */
+    .post-date--long {
+      display: none;
+    }
+
+    .post-date--short {
+      display: inline;
+      flex: 0 0 88px;
+    }
+  }
+</style>

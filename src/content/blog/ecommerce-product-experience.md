@@ -30,4 +30,4 @@ Contact and policy pages also need to be easy to find. They should answer practi
 
 Check product selection, cart updates, enquiry forms, and navigation together. Good individual screens do not always add up to a clear journey.
 
-Read more about [Highrange Flavours](/projects/highrange-flavours/) or [contact me](/#contact) about a responsive website for your business.
+Read more about [Highrange Flavours](/case-studies/highrange-flavours/) or [contact me](/contact/) about a responsive website for your business.

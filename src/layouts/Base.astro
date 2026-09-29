@@ -5,6 +5,9 @@
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import profile from '../content/profile/main.json';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { navigation } from '../lib/navigation';
 
 interface Props {
   title?: string;
@@ -15,8 +18,8 @@ interface Props {
 }
 
 const {
-  title = 'Joyal Varghese · Portfolio',
-  description = 'Joyal Varghese, full-stack developer in Sharjah, UAE, building web applications and ERP systems.',
+  title = 'Joyal Varghese | Software Developer in Sharjah, UAE',
+  description = 'Joyal Varghese is a software developer in Sharjah, UAE, building web applications, ERP systems, APIs and practical business tools.',
   type = 'website',
   structuredData,
   noindex = false,
@@ -25,17 +28,40 @@ const pathname = Astro.url.pathname.endsWith('.html') ? Astro.url.pathname : `${
 const canonical = Astro.site ? new URL(pathname, Astro.site).href : undefined;
 const image = Astro.site && profile.photo ? new URL(profile.photo, Astro.site).href : undefined;
 const ogImage = Astro.site ? new URL('/media/og-image.png', Astro.site).href : undefined;
-const homeData = pathname === '/' ? {
-  '@context': 'https://schema.org', '@type': 'ProfilePage', url: canonical,
-  mainEntity: {
-    '@type': 'Person', name: profile.name, jobTitle: 'Full Stack Software Developer',
-    description, image, url: canonical,
-    sameAs: profile.contacts.filter((contact) => contact.sub === 'linkedin').map((contact) => contact.url),
-    homeLocation: { '@type': 'Place', name: 'Sharjah, United Arab Emirates' },
-    knowsAbout: ['React', 'Next.js', 'NestJS', 'TypeScript', 'PostgreSQL', 'ERP development'],
-  },
+const origin = Astro.site?.href;
+const personId = origin ? `${origin}#person` : undefined;
+const pageLabel = navigation.find((item) => item.href === pathname)?.label ?? title.split('|')[0].trim();
+const parent = navigation.find((item) => item.href !== '/' && pathname.startsWith(item.href) && pathname !== item.href);
+const breadcrumbs = [
+  { name: 'Home', path: '/' },
+  ...(parent ? [{ name: parent.label, path: parent.href }] : []),
+  ...(pathname !== '/' ? [{ name: pageLabel, path: pathname }] : []),
+];
+const schema = origin && !noindex ? {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'WebSite', '@id': `${origin}#website`, url: origin, name: `${profile.name} — Software Developer`, inLanguage: 'en', publisher: { '@id': personId } },
+    {
+      '@type': 'Person', '@id': personId, name: profile.name, jobTitle: 'Software Developer',
+      description: profile.bio, image, url: new URL('/about/', origin).href,
+      sameAs: profile.contacts.filter((contact) => ['linkedin', 'instagram'].includes(contact.sub)).map((contact) => contact.url),
+      homeLocation: { '@type': 'Place', name: 'Sharjah, United Arab Emirates' },
+      knowsAbout: ['React', 'Next.js', 'NestJS', 'TypeScript', 'PostgreSQL', 'ERP development'],
+    },
+    {
+      '@type': pathname === '/about/' ? 'ProfilePage' : pathname === '/contact/' ? 'ContactPage' : 'WebPage',
+      '@id': `${canonical}#webpage`, url: canonical, name: title, description, inLanguage: 'en',
+      isPartOf: { '@id': `${origin}#website` }, about: { '@id': personId },
+      ...(pathname === '/about/' ? { mainEntity: { '@id': personId } } : {}),
+      ...(pathname !== '/' ? { breadcrumb: { '@id': `${canonical}#breadcrumb` } } : {}),
+    },
+    ...(pathname !== '/' ? [{
+      '@type': 'BreadcrumbList', '@id': `${canonical}#breadcrumb`,
+      itemListElement: breadcrumbs.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: new URL(item.path, origin).href })),
+    }] : []),
+    ...(structuredData ? [structuredData] : []),
+  ],
 } : undefined;
-const schema = structuredData ?? homeData;
 ---
 
 <!doctype html>
@@ -47,6 +73,7 @@ const schema = structuredData ?? homeData;
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="author" content={profile.name} />
+    <meta name="theme-color" content="#fbfaf5" />
     {noindex && <meta name="robots" content="noindex, follow" />}
     {canonical && !noindex && <link rel="canonical" href={canonical} />}
     <meta property="og:title" content={title} />
@@ -56,11 +83,12 @@ const schema = structuredData ?? homeData;
     <meta property="og:locale" content="en_GB" />
     {canonical && <meta property="og:url" content={canonical} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
-    {ogImage && <meta property="og:image:alt" content="Joyal Varghese, full stack developer in Sharjah, UAE" />}
+    {ogImage && <meta property="og:image:alt" content="Joyal Varghese, software developer in Sharjah, UAE" />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {ogImage && <meta name="twitter:image" content={ogImage} />}
+    {ogImage && <meta name="twitter:image:alt" content="Joyal Varghese — software developer in Sharjah, UAE" />}
     {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -70,16 +98,15 @@ const schema = structuredData ?? homeData;
       rel="stylesheet"
     />
 
-    {/* Enables scroll-reveal styles; runs before paint so content never flashes. */}
-    <script is:inline>document.documentElement.classList.add('js');</script>
-
     <ClientRouter />
   </head>
   <body>
-    {/* Capture the whole rendered page so scoped styles survive the turn. */}
-    <main>
-      <slot />
-    </main>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="site-notebook">
+      <SiteHeader />
+      <main id="main-content" tabindex="-1"><slot /></main>
+      <SiteFooter />
+    </div>
 
     <script>
       // Scroll-reveal: fade + rise [data-reveal] elements as they enter view.
@@ -92,7 +119,7 @@ const schema = structuredData ?? homeData;
         if (!els.length) return;
 
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reduce) {
+        if (reduce || !('IntersectionObserver' in window)) {
           els.forEach((el) => el.classList.add('is-revealed'));
           return;
         }
@@ -121,6 +148,7 @@ const schema = structuredData ?? homeData;
         );
 
         revealObserver = io;
+        document.documentElement.classList.add('js');
         els.forEach((el) => io.observe(el));
       }
 
@@ -131,6 +159,7 @@ const schema = structuredData ?? homeData;
       // created; play() rejection (blocked / no gesture) is swallowed.
       let flipAudio: HTMLAudioElement | null = null;
       function playFlip() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         try {
           if (!flipAudio) {
             flipAudio = new Audio('/page-flip-sound.mp3');
@@ -154,7 +183,6 @@ const schema = structuredData ?? homeData;
 
       document.addEventListener('astro:before-swap', (event) => {
         revealObserver?.disconnect();
-        event.newDocument.documentElement.classList.add('js');
       });
 
       // Resolve above-the-fold reveals before the destination snapshot.

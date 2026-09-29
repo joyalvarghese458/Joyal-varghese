@@ -1,0 +1,25 @@
+---
+import { navigation } from '../lib/navigation';
+import profile from '../content/profile/main.json';
+---
+<footer class="site-footer">
+  <div class="footer-top">
+    <p>Joyal Varghese <span>Software developer · Sharjah, UAE</span></p>
+    <a class="nb-link next-page" href="/contact/">Have something in mind? Say hi →</a>
+  </div>
+  <nav aria-label="Footer navigation">
+    {navigation.map(({ href, label }) => <a href={href}>{label}</a>)}
+  </nav>
+  <div class="footer-bottom"><small>{profile.footerNote}</small><span>end of page ✦</span></div>
+</footer>
+<style>
+  .site-footer { margin: 0 var(--nb-pad); padding: 24px 0; border-top: 1.5px dashed var(--nb-pencil); }
+  .footer-top p { margin: 0 0 12px; font-size: 23px; }
+  .footer-top p span { display: block; color: var(--nb-pencil); font-size: 17px; }
+  .next-page { font-size: 21px; padding: 10px 0; }
+  nav { display: flex; flex-wrap: wrap; gap: 0 22px; margin: 12px 0 20px; }
+  nav a { padding: 10px 0; min-height: 44px; font-size: 18px; text-underline-offset: 5px; }
+  .footer-bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; color: var(--nb-pencil); }
+  small { font: 10px/1.8 'JetBrains Mono', monospace; max-width: 65ch; }
+  @media (min-width: 880px) { .footer-top { display: flex; justify-content: space-between; gap: 24px; align-items: center; } }
+</style>

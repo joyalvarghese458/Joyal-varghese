@@ -1,0 +1,206 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import GridPaper from '../components/GridPaper.astro';
+import StickyNote from '../components/StickyNote.astro';
+import Highlight from '../components/Highlight.astro';
+import HandUnderline from '../components/HandUnderline.astro';
+import PhotoCutout from '../components/PhotoCutout.astro';
+import Marker from '../components/Marker.astro';
+import Hand from '../components/Hand.astro';
+import Mono from '../components/Mono.astro';
+import Doodle from '../components/Doodle.astro';
+import HandLink from '../components/HandLink.astro';
+import { NB } from '../lib/notebook';
+
+const [profiles, experience, education, skills] = await Promise.all([
+  getCollection('profile'),
+  getCollection('experience'),
+  getCollection('education'),
+  getCollection('skills'),
+]);
+const profile = profiles[0].data;
+const allExperience = experience.sort((a, b) => a.data.order - b.data.order);
+const allEducation = education.sort((a, b) => a.data.order - b.data.order);
+const allSkills = skills.sort((a, b) => a.data.order - b.data.order);
+const description = 'Meet Joyal Varghese, a software developer in Sharjah, UAE. Explore his experience, education, and skills in React, NestJS, PostgreSQL, and ERP systems.';
+---
+
+<Base title="About Joyal Varghese | Software Developer in UAE" description={description}>
+  <GridPaper size={22}>
+    <div class="about-page">
+      <header class="page-header">
+        <Mono size={10} as="p" class="eyebrow">The person behind the code</Mono>
+        <Marker as="h1" size="clamp(42px, 8vw, 72px)" class="page-title">About me.</Marker>
+        <Hand as="p" size="clamp(21px, 2.6vw, 28px)" class="page-intro">
+          I'm {profile.firstName}, a <Highlight>software developer</Highlight> in Sharjah, UAE.
+        </Hand>
+      </header>
+
+      <section class="bio-section" aria-labelledby="bio-heading">
+        <div class="portrait-wrap">
+          <div class="portrait-tape" aria-hidden="true"></div>
+          <PhotoCutout
+            width="100%"
+            height="clamp(230px, 34vw, 330px)"
+            rotate={-3}
+            src={profile.photo}
+            loading="eager"
+            alt={`Portrait of ${profile.name}, software developer`}
+            label={profile.photoCaption}
+          />
+          <Hand size={19} color={NB.pencil} as="p" class="photo-caption">{profile.photoCaption}</Hand>
+        </div>
+        <div class="bio-copy">
+          <h2 id="bio-heading" class="section-heading">
+            <StickyNote color={NB.yellow} rotate={-2} inline>
+              <Marker size="clamp(25px, 3vw, 32px)">A little background</Marker>
+            </StickyNote>
+          </h2>
+          <Hand as="p" size="clamp(19px, 2.1vw, 23px)" class="bio-text">{profile.bio}</Hand>
+          <HandUnderline width={120} />
+          <div class="bio-links">
+            <HandLink href="/Joyal_Varghese_Resume.pdf" download data-astro-reload color={NB.redInk}>
+              <Hand size={21} color={NB.redInk}>Download my resume ↗</Hand>
+            </HandLink>
+            <HandLink href="/contact/"><Hand size={21}>Say hello →</Hand></HandLink>
+          </div>
+        </div>
+      </section>
+
+      <section class="section experience-section" aria-labelledby="experience-heading">
+        <h2 id="experience-heading" class="section-heading">
+          <StickyNote color={NB.yellow} rotate={2} inline>
+            <Marker size="clamp(26px, 3vw, 34px)">Experience</Marker>
+          </StickyNote>
+        </h2>
+        <div class="experience-list">
+          {allExperience.map((entry) => (
+            <article class="timeline-entry">
+              <Mono size={10} as="p" class="entry-year">{entry.data.year}</Mono>
+              <div class="entry-body">
+                <Hand size="clamp(22px, 2.5vw, 28px)" as="h3" weight={700} class="entry-role">{entry.data.role}</Hand>
+                {entry.data.url ? (
+                  <HandLink href={entry.data.url} target="_blank" rel="noopener noreferrer" color={NB.pencil}>
+                    <Hand size={19} color={NB.pencil}>{entry.data.place}</Hand>
+                  </HandLink>
+                ) : (
+                  <Hand size={19} as="p" color={NB.pencil} class="entry-place">{entry.data.place}</Hand>
+                )}
+                <Hand size="clamp(18px, 2vw, 21px)" as="p" color={NB.inkSoft} class="entry-description">{entry.data.desc}</Hand>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <div class="education-skills section">
+        <section aria-labelledby="education-heading">
+          <h2 id="education-heading" class="section-heading">
+            <StickyNote color={NB.yellow} rotate={-2} inline>
+              <Marker size="clamp(26px, 3vw, 34px)">Education</Marker>
+            </StickyNote>
+          </h2>
+          <div class="education-list">
+            {allEducation.map((entry) => (
+              <article class="education-entry">
+                <Mono size={10} as="p" class="entry-year">{entry.data.year}</Mono>
+                <Hand size="clamp(21px, 2.1vw, 25px)" as="h3" weight={700} class="entry-role">{entry.data.role}</Hand>
+                <Hand size={18} as="p" color={NB.pencil} class="entry-place">{entry.data.place}</Hand>
+                <Hand size={18} as="p" color={NB.inkSoft} class="entry-description">{entry.data.desc}</Hand>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="skills-heading">
+          <h2 id="skills-heading" class="section-heading">
+            <StickyNote color={NB.yellow} rotate={3} inline>
+              <Marker size="clamp(26px, 3vw, 34px)">My toolkit</Marker>
+            </StickyNote>
+          </h2>
+          <Hand as="p" size={19} color={NB.inkSoft} class="toolkit-intro">Languages, tools, and practices I work with.</Hand>
+          <ul class="skills-list">
+            {allSkills.map((skill) => (
+              <li class="skill-item">
+                <Doodle kind="check" size={17} color={NB.red} class="skill-check" />
+                <div class="skill-chips">
+                  {skill.data.label.split(',').map((part) => (
+                    <span class="skill-chip"><Hand size={17}>{part.trim()}</Hand></span>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+          <HandLink href="/blogs/" color={NB.redInk} class="writing-link">
+            <Hand size={21} color={NB.redInk}>Read my development notes →</Hand>
+          </HandLink>
+        </section>
+      </div>
+
+      <section class="next-page section" aria-labelledby="next-heading">
+        <Marker as="h2" id="next-heading" size="clamp(28px, 4vw, 40px)" class="next-title">From experience to work.</Marker>
+        <Hand as="p" size="clamp(20px, 2.2vw, 25px)" color={NB.inkSoft} class="next-copy">
+          See how these skills come together in real ERP systems, web applications, and storefronts.
+        </Hand>
+        <div class="next-links">
+          <HandLink href="/case-studies/" color={NB.redInk}><Hand size={23} color={NB.redInk}>Explore case studies →</Hand></HandLink>
+          <HandLink href="/services/"><Hand size={23}>How I can help →</Hand></HandLink>
+        </div>
+      </section>
+    </div>
+  </GridPaper>
+</Base>
+
+<style>
+  .about-page { max-width: 1280px; margin: 0 auto; padding: 28px var(--nb-pad) 48px; }
+  .eyebrow { margin: 0 0 12px; line-height: 1.7; }
+  .page-title { margin: 0; }
+  .page-intro { max-width: 720px; margin: 18px 0 0; }
+  .bio-section { display: grid; gap: 30px; margin-top: 34px; }
+  .portrait-wrap { position: relative; width: min(68%, 240px); margin: 0 auto; }
+  .portrait-tape { position: absolute; z-index: 2; width: 80px; height: 22px; top: -7px; left: -12px; background: rgba(255, 228, 92, 0.7); transform: rotate(-22deg); pointer-events: none; }
+  .photo-caption { text-align: center; margin: 12px 0 0; transform: rotate(-3deg); }
+  .section-heading { margin: 0 0 28px; }
+  .bio-text { margin: 0 0 16px; max-width: 62ch; }
+  .bio-links, .next-links { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 14px; }
+  .bio-links :global(a), .next-links :global(a), .writing-link { min-height: 44px; display: inline-flex; align-items: center; }
+  .section { margin-top: 42px; }
+  .timeline-entry { display: grid; gap: 6px; padding: 0 0 25px; margin-bottom: 25px; border-bottom: 1px dashed rgba(90, 90, 90, 0.3); }
+  .timeline-entry:last-child { margin-bottom: 0; }
+  .entry-year { margin: 0; line-height: 1.7; }
+  .entry-body { min-width: 0; }
+  .entry-role { margin: 0 0 3px; }
+  .entry-place { margin: 0; }
+  .entry-description { margin: 9px 0 0; max-width: 66ch; }
+  .education-skills { display: grid; gap: 42px; }
+  .education-entry { margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px dashed rgba(90, 90, 90, 0.3); }
+  .education-entry .entry-year { margin-bottom: 8px; }
+  .education-entry:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+  .toolkit-intro { margin: 0 0 16px; }
+  .skills-list { padding: 0; margin: 0; list-style: none; display: grid; gap: 18px; }
+  .skill-item { display: flex; align-items: flex-start; gap: 10px; }
+  .skill-check { flex: 0 0 auto; margin-top: 7px; }
+  .skill-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .skill-chip { padding: 2px 10px; border: 1px solid rgba(90, 90, 90, 0.4); border-radius: 999px; background: var(--nb-paper); }
+  .writing-link { margin-top: 22px; }
+  .next-page { border-top: 1.5px dashed var(--nb-pencil); padding-top: 28px; }
+  .next-title { margin: 0; }
+  .next-copy { margin: 16px 0 0; max-width: 700px; }
+
+  @media (min-width: 600px) {
+    .bio-section { grid-template-columns: minmax(160px, 0.7fr) minmax(0, 1.5fr); align-items: start; gap: 32px; }
+    .portrait-wrap { width: 100%; margin-top: 8px; }
+    .timeline-entry { grid-template-columns: 130px minmax(0, 1fr); gap: 24px; }
+    .timeline-entry .entry-year { padding-top: 6px; }
+  }
+  @media (min-width: 880px) {
+    .about-page { padding-top: 40px; padding-bottom: 64px; }
+    .bio-section { grid-template-columns: 270px minmax(0, 1fr); gap: 55px; margin-top: 46px; }
+    .portrait-wrap { max-width: 260px; }
+    .section { margin-top: 60px; }
+    .education-skills { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 50px; }
+    .timeline-entry { grid-template-columns: 170px minmax(0, 1fr); padding-bottom: 28px; margin-bottom: 28px; }
+    .next-page { padding-top: 36px; }
+  }
+</style>

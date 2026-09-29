@@ -8,7 +8,7 @@ export async function getBlogPosts() {
   return [
     ...articles.map((entry) => ({
       id: `article-${entry.id}`,
-      data: { ...entry.data, url: `/blog/${entry.id}/`, excerpt: entry.data.description, readMinutes: readingMinutes(entry.body) },
+      data: { ...entry.data, url: `/blogs/${entry.id}/`, excerpt: entry.data.description, readMinutes: readingMinutes(entry.body) },
     })),
     ...links.map((entry) => ({ id: `link-${entry.id}`, data: entry.data })),
   ].sort((a, b) => b.data.date.localeCompare(a.data.date) || a.id.localeCompare(b.id));
