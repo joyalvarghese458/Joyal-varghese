@@ -33,6 +33,7 @@ const {
 const wStyle = cssSize(width);
 const hStyle = cssSize(height);
 const optimizedPhoto = src === '/media/joyal-portrait-black-shirt.png' ? blackShirtPortrait : src === '/media/joyal-portrait.png' ? portrait : undefined;
+const accessibleAlt = alt || label;
 ---
 
 <div
@@ -42,11 +43,11 @@ const optimizedPhoto = src === '/media/joyal-portrait-black-shirt.png' ? blackSh
 >
   <div class="nb-photo-inner">
     {optimizedPhoto ? (
-      <Image src={optimizedPhoto} alt={alt} widths={[220, 440, 660]} sizes="(min-width: 880px) 280px, (min-width: 601px) 33vw, 220px" width={440} format="webp" quality={82} loading={loading} fetchpriority={loading === 'eager' ? 'high' : 'auto'} decoding="async" style="width: 100%; height: 100%; object-fit: cover;" />
+      <Image src={optimizedPhoto} alt={accessibleAlt} widths={[220, 440, 660]} sizes="(min-width: 880px) 280px, (min-width: 601px) 33vw, 220px" width={440} format="webp" quality={82} loading={loading} fetchpriority={loading === 'eager' ? 'high' : 'auto'} decoding="async" style="width: 100%; height: 100%; object-fit: cover;" />
     ) : src ? (
       <img
         src={src}
-        alt={alt}
+        alt={accessibleAlt}
         loading={loading}
         decoding="async"
         style="width: 100%; height: 100%; object-fit: cover;"

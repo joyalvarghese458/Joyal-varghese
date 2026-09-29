@@ -18,8 +18,8 @@ interface Props {
 }
 
 const {
-  title = 'Joyal Varghese | Software Developer in Sharjah, UAE',
-  description = 'Joyal Varghese is a software developer in Sharjah, UAE, building web applications, ERP systems, APIs and practical business tools.',
+  title = 'Joyal Varghese | Full-Stack Software Developer in Sharjah, UAE',
+  description = 'Joyal Varghese is a full-stack software developer in Sharjah, UAE, building web applications, ERP systems, APIs, and practical business tools.',
   type = 'website',
   structuredData,
   noindex = false,
@@ -47,6 +47,14 @@ const schema = origin && !noindex ? {
       sameAs: profile.contacts.filter((contact) => ['linkedin', 'instagram'].includes(contact.sub)).map((contact) => contact.url),
       homeLocation: { '@type': 'Place', name: 'Sharjah, United Arab Emirates' },
       knowsAbout: ['React', 'Next.js', 'NestJS', 'TypeScript', 'PostgreSQL', 'ERP development'],
+    },
+    {
+      '@type': 'ProfessionalService', '@id': `${origin}#professional-service`,
+      name: `${profile.name} — Software Developer`, url: origin,
+      description: 'Full-stack software development services in Sharjah, UAE, including web applications, ERP systems, APIs, and business tools.',
+      provider: { '@id': personId },
+      areaServed: [{ '@type': 'City', name: 'Sharjah' }, { '@type': 'Country', name: 'United Arab Emirates' }],
+      serviceType: ['Web application development', 'ERP development', 'API development', 'E-commerce development'],
     },
     {
       '@type': pathname === '/about/' ? 'ProfilePage' : pathname === '/contact/' ? 'ContactPage' : 'WebPage',
@@ -83,6 +91,10 @@ const schema = origin && !noindex ? {
     <meta property="og:locale" content="en_GB" />
     {canonical && <meta property="og:url" content={canonical} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:secure_url" content={ogImage} />}
+    {ogImage && <meta property="og:image:type" content="image/png" />}
+    {ogImage && <meta property="og:image:width" content="1200" />}
+    {ogImage && <meta property="og:image:height" content="630" />}
     {ogImage && <meta property="og:image:alt" content="Joyal Varghese, software developer in Sharjah, UAE" />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />

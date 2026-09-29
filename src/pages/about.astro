@@ -23,17 +23,17 @@ const profile = profiles[0].data;
 const allExperience = experience.sort((a, b) => a.data.order - b.data.order);
 const allEducation = education.sort((a, b) => a.data.order - b.data.order);
 const allSkills = skills.sort((a, b) => a.data.order - b.data.order);
-const description = 'Meet Joyal Varghese, a software developer in Sharjah, UAE. Explore his experience, education, and skills in React, NestJS, PostgreSQL, and ERP systems.';
+const description = 'Meet Joyal Varghese, a full-stack software developer in Sharjah, UAE. Explore his experience, education, and skills in React, NestJS, PostgreSQL, and ERP systems.';
 ---
 
-<Base title="About Joyal Varghese | Software Developer in UAE" description={description}>
+<Base title="About Joyal Varghese | Full-Stack Software Developer in Sharjah" description={description}>
   <GridPaper size={22}>
     <div class="about-page">
       <header class="page-header">
         <Mono size={10} as="p" class="eyebrow">The person behind the code</Mono>
         <Marker as="h1" size="clamp(42px, 8vw, 72px)" class="page-title">About me.</Marker>
         <Hand as="p" size="clamp(21px, 2.6vw, 28px)" class="page-intro">
-          I'm {profile.firstName}, a <Highlight>software developer</Highlight> in Sharjah, UAE.
+          I'm {profile.firstName}, a <Highlight>full-stack software developer</Highlight> in Sharjah, UAE.
         </Hand>
       </header>
 
