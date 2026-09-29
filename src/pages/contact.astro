@@ -35,7 +35,7 @@ const email = profile.contacts.find((contact) => contact.sub === 'email')!;
         </div>
         <div class="draft-panel">
           <HandBox rounded width={450} height={500} />
-          <form action="https://formspree.io/f/mvkgdwwo" method="POST" aria-labelledby="message-heading" aria-describedby="form-help">
+          <form id="contact-form" action="https://formspree.io/f/mvkgdwwo" method="POST" aria-labelledby="message-heading" aria-describedby="form-help">
             <p id="form-help">Send me a note here. Your message goes through Formspree to my inbox.</p>
             <label for="contact-name">Your name</label>
             <input id="contact-name" name="name" autocomplete="name" required minlength="2" maxlength="100" />
@@ -53,6 +53,24 @@ const email = profile.contacts.find((contact) => contact.sub === 'email')!;
     </div>
   </GridPaper>
 </Base>
+<script>
+  const contactForm = document.querySelector<HTMLFormElement>('#contact-form');
+
+  if (contactForm) {
+    let submitted = false;
+
+    contactForm.addEventListener('submit', () => {
+      submitted = true;
+    });
+
+    window.addEventListener('pageshow', () => {
+      if (submitted) {
+        contactForm.reset();
+        submitted = false;
+      }
+    });
+  }
+</script>
 <style>
   .contact-page { max-width: 1280px; margin: 0 auto; padding: 28px var(--nb-pad) 52px; }
   .eyebrow { margin: 0 0 14px; line-height: 1.7; }
