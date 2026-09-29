@@ -166,33 +166,6 @@ const schema = origin && !noindex ? {
 
       document.addEventListener('astro:page-load', initReveal);
 
-      // Page-flip sound: plays as a navigation begins (still inside the
-      // click gesture, so autoplay policy lets it through). Reused, lazily
-      // created; play() rejection (blocked / no gesture) is swallowed.
-      let flipAudio: HTMLAudioElement | null = null;
-      function playFlip() {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        try {
-          if (!flipAudio) {
-            flipAudio = new Audio('/page-flip-sound.mp3');
-            flipAudio.preload = 'auto';
-            flipAudio.volume = 0.55;
-          }
-          flipAudio.currentTime = 0;
-          flipAudio.play().catch(() => {});
-        } catch {
-          /* no-op */
-        }
-      }
-      document.addEventListener('astro:before-preparation', playFlip);
-
-      // Set direction before Astro captures the rendered outgoing page.
-      // Native snapshots retain scoped CSS without cloning the page DOM.
-      document.addEventListener('astro:before-preparation', (event) => {
-        const depth = (url: URL) => url.pathname.split('/').filter(Boolean).length;
-        if (depth(event.to) < depth(event.from)) event.direction = 'back';
-      });
-
       document.addEventListener('astro:before-swap', (event) => {
         revealObserver?.disconnect();
       });

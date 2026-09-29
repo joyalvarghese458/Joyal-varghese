@@ -177,56 +177,17 @@ html.js [data-reveal].is-revealed {
   html.js [data-reveal] { opacity: 1; transform: none; transition: none; }
 }
 
-/* Browser snapshots preserve the fully styled page across the DOM swap. */
+/* Keep Astro's client-side navigation fast and immediate. The router remains
+   enabled for navigation speed, but all route-change visual effects are off. */
 html[data-astro-transition] { scroll-behavior: auto; }
 
-::view-transition-group(root) { animation-duration: 580ms; }
-::view-transition-image-pair(root) {
-  perspective: 1800px;
-  perspective-origin: left center;
-  isolation: isolate;
-}
+::view-transition-group(root),
+::view-transition-image-pair(root),
 ::view-transition-old(root),
-::view-transition-new(root) {
-  height: 100%;
-  object-fit: none;
-  object-position: top left;
-  mix-blend-mode: normal;
-  backface-visibility: hidden;
-  transform-origin: left center;
-  animation: none;
+::view-transition-new(root),
+html[data-astro-transition-fallback] main {
+  animation: none !important;
 }
-::view-transition-old(root) {
-  z-index: 2;
-  animation: nb-page-turn-out 580ms cubic-bezier(.32, .08, .2, 1) both;
-}
-::view-transition-new(root) { z-index: 1; }
-html[data-astro-transition="back"]::view-transition-old(root) {
-  z-index: 1;
-  animation: none;
-}
-html[data-astro-transition="back"]::view-transition-new(root) {
-  z-index: 2;
-  animation: nb-page-turn-in 580ms cubic-bezier(.32, .08, .2, 1) both;
-}
-@keyframes nb-page-turn-out {
-  from { transform: rotateY(0deg); opacity: 1; }
-  to { transform: rotateY(-100deg); opacity: 0; }
-}
-@keyframes nb-page-turn-in {
-  from { transform: rotateY(-100deg); opacity: 0; }
-  to { transform: rotateY(0deg); opacity: 1; }
-}
-
-/* A short fade for browsers without native view-transition snapshots. */
-html[data-astro-transition-fallback="old"] main {
-  animation: nb-route-fade-out 120ms ease-out both;
-}
-html[data-astro-transition-fallback="new"] main {
-  animation: nb-route-fade-in 180ms ease-out both;
-}
-@keyframes nb-route-fade-out { to { opacity: 0; } }
-@keyframes nb-route-fade-in { from { opacity: 0; } to { opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(root),
