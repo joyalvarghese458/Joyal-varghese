@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import GridPaper from '../components/GridPaper.astro';
+import Marker from '../components/Marker.astro';
+import Hand from '../components/Hand.astro';
+import HandLink from '../components/HandLink.astro';
+import { NB } from '../lib/notebook';
+---
+
+<Base title="Full-Stack Developer in Sharjah, UAE | Joyal Varghese" description="Joyal Varghese is a full-stack developer in Sharjah, UAE, building custom web applications, ERP systems, APIs, and e-commerce platforms for businesses.">
+  <GridPaper size={22}>
+    <main class="seo-page">
+      <Marker as="h1" size="clamp(38px, 7vw, 64px)">Full-Stack Developer in Sharjah</Marker>
+      <Hand as="p" size="clamp(21px, 2.5vw, 28px)" class="lead">I help businesses in Sharjah turn ideas and manual workflows into reliable software.</Hand>
+      <Hand as="p" size={20} color={NB.inkSoft}>I’m Joyal Varghese, a full-stack software developer based in Sharjah, UAE. I build responsive interfaces, secure APIs, databases, ERP systems, and practical business tools using React, Next.js, NestJS, TypeScript, and PostgreSQL.</Hand>
+      <h2>Software development for Sharjah businesses</h2>
+      <Hand as="p" size={19}>Whether you need an internal ERP, a customer-facing web application, an e-commerce website, or an API integration, I can help plan, build, deploy, and improve the product.</Hand>
+      <ul><li>Custom ERP and business workflow systems</li><li>React and Next.js web applications</li><li>Backend APIs and PostgreSQL databases</li><li>E-commerce and responsive websites</li></ul>
+      <HandLink href="/case-studies/" color={NB.redInk}><Hand size={22}>See my case studies →</Hand></HandLink>
+      <HandLink href="/contact/" color={NB.redInk}><Hand size={22}>Start a project conversation →</Hand></HandLink>
+    </main>
+  </GridPaper>
+</Base>
+
+<style>
+  .seo-page { max-width: 850px; margin: 0 auto; padding: 48px var(--nb-pad) 72px; }
+  .seo-page :global(h1) { margin: 0; }
+  .seo-page :global(h2) { margin: 38px 0 10px; font-family: 'Permanent Marker', cursive; font-size: clamp(28px, 4vw, 40px); font-weight: 400; }
+  .seo-page :global(p) { max-width: 760px; line-height: 1.65; }
+  .lead { margin: 18px 0 14px; }
+  .seo-page ul { margin: 18px 0 26px; padding-left: 28px; font-family: Kalam, cursive; font-size: 20px; line-height: 1.8; }
+  .seo-page :global(a) { display: inline-flex; margin: 8px 24px 0 0; min-height: 44px; align-items: center; }
+</style>

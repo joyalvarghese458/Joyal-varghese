@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import GridPaper from '../components/GridPaper.astro';
+import Marker from '../components/Marker.astro';
+import Hand from '../components/Hand.astro';
+import HandLink from '../components/HandLink.astro';
+import { NB } from '../lib/notebook';
+---
+
+<Base title="Software Developer in UAE | Joyal Varghese" description="Joyal Varghese is a software developer in the UAE, based in Sharjah and serving businesses in Sharjah, Dubai, and across the United Arab Emirates.">
+  <GridPaper size={22}><main class="seo-page">
+    <Marker as="h1" size="clamp(38px, 7vw, 64px)">Software Developer in the UAE</Marker>
+    <Hand as="p" size="clamp(21px, 2.5vw, 28px)" class="lead">Custom software for real business problems.</Hand>
+    <Hand as="p" size={20} color={NB.inkSoft}>Based in Sharjah, I work with businesses in Dubai and across the UAE to create web applications, ERP systems, APIs, e-commerce platforms, and internal tools.</Hand>
+    <h2>From idea to working software</h2>
+    <Hand as="p" size={19}>I combine frontend development, backend architecture, database design, deployment, and maintenance so your software supports the way your team actually works.</Hand>
+    <HandLink href="/services/" color={NB.redInk}><Hand size={22}>Explore software development services →</Hand></HandLink>
+    <HandLink href="/contact/" color={NB.redInk}><Hand size={22}>Discuss your project →</Hand></HandLink>
+  </main></GridPaper>
+</Base>
+
+<style>.seo-page { max-width: 850px; margin: 0 auto; padding: 48px var(--nb-pad) 72px; } .seo-page :global(h1) { margin: 0; } .seo-page :global(h2) { margin: 38px 0 10px; font-family: 'Permanent Marker', cursive; font-size: clamp(28px, 4vw, 40px); font-weight: 400; } .seo-page :global(p) { line-height: 1.65; } .lead { margin: 18px 0 14px; } .seo-page :global(a) { display: inline-flex; margin: 8px 24px 0 0; min-height: 44px; align-items: center; }</style>
