@@ -139,6 +139,11 @@ const experience = (await getCollection('experience')).sort((a, b) => a.data.ord
       messages.scrollTop = messages.scrollHeight;
     };
     const related = [
+      ['instagram|insta|ig', 'What is Joyal\'s Instagram?'],
+      ['linkedin', 'What is Joyal\'s LinkedIn?'],
+      ['github|git hub', 'What is Joyal\'s GitHub?'],
+      ['whatsapp|whats app', 'What is Joyal\'s WhatsApp?'],
+      ['experience|company|companies|worked|employment|career', 'What is Joyal\'s work experience?'],
       ['phone|mobile|number|call', 'What is Joyal’s phone number?'],
       ['place|live|based|location', 'Where is Joyal based?'],
       ['hobby|interest|free time', 'What are Joyal’s hobbies?'],
@@ -158,7 +163,7 @@ const experience = (await getCollection('experience')).sort((a, b) => a.data.ord
       promptBox.innerHTML = '';
       matches.slice(0, 3).forEach((text) => { const button = document.createElement('button'); button.type = 'button'; button.dataset.question = text; button.textContent = text; button.addEventListener('click', () => ask(text)); promptBox.append(button); });
     };
-    const ask = (question) => { if (!question.trim()) return; addMessage(question, 'user'); window.setTimeout(() => addMessage(answer(question), 'bot'), 220); };
+    const ask = async (question) => { if (!question.trim()) return; root.querySelector('.about-bot__prompts').innerHTML = ''; addMessage(question, 'user'); const localAnswer = answer(question); if (!localAnswer.startsWith('I can help with')) return window.setTimeout(() => addMessage(localAnswer, 'bot'), 220); addMessage('Thinking…', 'bot'); try { const result = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question }) }); const data = await result.json(); messages.lastElementChild.textContent = result.ok ? data.answer : `AI error: ${data.error || 'Please try again.'}`; } catch { messages.lastElementChild.textContent = 'I could not reach the AI assistant right now. Please try again.'; } };
     const open = () => { panel.hidden = false; launcher.setAttribute('aria-expanded', 'true'); window.setTimeout(() => input.focus(), 50); };
     launcher.addEventListener('click', open);
     close.addEventListener('click', () => { panel.hidden = true; launcher.setAttribute('aria-expanded', 'false'); launcher.focus(); });
