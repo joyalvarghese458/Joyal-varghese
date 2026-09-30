@@ -28,8 +28,11 @@ const contact = profile.contacts.find((item) => item.sub === 'email');
           <filter id="bot-shadow" x="-30%" y="-30%" width="160%" height="180%">
             <feDropShadow dx="0" dy="2" stdDeviation="1.8" flood-color="#8290a5" flood-opacity=".35" />
           </filter>
+          <filter id="bot-ground-blur" x="-30%" y="-200%" width="160%" height="500%">
+            <feGaussianBlur stdDeviation="1.1" />
+          </filter>
         </defs>
-        <ellipse cx="32" cy="60" rx="13" ry="2" fill="#9ba5b5" opacity=".22" />
+        <ellipse class="about-bot__shadow" cx="32" cy="61" rx="15" ry="2.8" fill="#536277" opacity=".42" filter="url(#bot-ground-blur)" />
         <g filter="url(#bot-shadow)">
           <path d="M14 35c-5 2-6 9-7 14-.5 3 1 5 3 5 3 0 5-5 6-10l3-8z" fill="url(#bot-shell)" />
           <path d="M50 35c5 2 6 9 7 14 .5 3-1 5-3 5-3 0-5-5-6-10l-3-8z" fill="url(#bot-shell)" />
