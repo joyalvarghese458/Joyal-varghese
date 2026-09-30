@@ -11,6 +11,7 @@ const phoneContact = profile.contacts.find((item) => item.sub === 'phone');
 const instagramContact = profile.contacts.find((item) => item.sub === 'instagram');
 const linkedinContact = profile.contacts.find((item) => item.sub === 'linkedin');
 const githubContact = profile.contacts.find((item) => item.sub === 'github');
+const whatsappContact = profile.contacts.find((item) => item.sub === 'whatsapp');
 const experience = (await getCollection('experience')).sort((a, b) => a.data.order - b.data.order).map(({ data }) => data);
 ---
 
@@ -87,7 +88,7 @@ const experience = (await getCollection('experience')).sort((a, b) => a.data.ord
   </section>
 </aside>
 
-<script define:vars={{ bio: profile.bio, email: contact?.label ?? '', phone: phoneContact?.label ?? '', phoneUrl: phoneContact?.url ?? '', instagramUrl: instagramContact?.url ?? '', linkedinUrl: linkedinContact?.url ?? '', githubUrl: githubContact?.url ?? '', resume: '/Joyal_Varghese_Resume.pdf', education: { fullStack, degree, higherSecondary }, experience, personal: botProfile }}>
+<script define:vars={{ bio: profile.bio, email: contact?.label ?? '', phone: phoneContact?.label ?? '', phoneUrl: phoneContact?.url ?? '', instagramUrl: instagramContact?.url ?? '', linkedinUrl: linkedinContact?.url ?? '', githubUrl: githubContact?.url ?? '', whatsappUrl: whatsappContact?.url ?? '', resume: '/Joyal_Varghese_Resume.pdf', education: { fullStack, degree, higherSecondary }, experience, personal: botProfile }}>
   const root = document.querySelector('[data-about-bot]');
   if (root && !root.dataset.ready) {
     root.dataset.ready = 'true';
@@ -102,6 +103,7 @@ const experience = (await getCollection('experience')).sort((a, b) => a.data.ord
       if (q.includes('instagram') || q.includes('insta') || q.includes('ig')) return instagramUrl ? `Joyal's Instagram: <a href="${instagramUrl}" target="_blank" rel="noreferrer">${instagramUrl}</a>` : 'Joyal has not added an Instagram link yet.';
       if (q.includes('linkedin')) return linkedinUrl ? `Joyal's LinkedIn: <a href="${linkedinUrl}" target="_blank" rel="noreferrer">${linkedinUrl}</a>` : 'Joyal has not added a LinkedIn link yet.';
       if (q.includes('github') || q.includes('git hub')) return githubUrl ? `Joyal's GitHub: <a href="${githubUrl}" target="_blank" rel="noreferrer">${githubUrl}</a>` : 'Joyal has not added a GitHub link yet.';
+      if (q.includes('whatsapp') || q.includes('whats app')) return whatsappUrl ? `Message Joyal on WhatsApp: <a href="${whatsappUrl}" target="_blank" rel="noreferrer">Open WhatsApp</a>.` : 'Joyal has not added a WhatsApp link yet.';
       if (q.includes('experience') || q.includes('company') || q.includes('companies') || q.includes('worked') || q.includes('employment') || q.includes('career')) return `Joyal's work experience:<br><br>${experience.map((item) => `<strong>${item.role}</strong> — ${item.place}<br><small>${item.year}</small><br>${item.desc}`).join('<br><br>')}`;
       if (q.includes('hire') || q.includes('freelance') || q.includes('available') || q.includes('service')) return `Joyal can help with custom websites, ERP systems, dashboards, APIs, and full-stack application development. Tell him what you are building on the <a href="/contact/">contact page</a>, or <a href="https://wa.me/971568450406" target="_blank" rel="noreferrer">message him on WhatsApp</a>.`;
       if (q.includes('recruiter') || q.includes('job') || q.includes('candidate') || q.includes('experience')) return `Joyal is a full-stack software developer based in Sharjah, UAE. His strongest technologies are React, Next.js, TypeScript, NestJS, PostgreSQL, Prisma, and Docker. He develops multi-branch ERP software and previously built enterprise applications at Reon Technologies. <a href="${resume}" download>Download his resume</a> or <a href="/contact/">contact him</a>.`;
