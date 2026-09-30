@@ -100,7 +100,13 @@ const experience = (await getCollection('experience')).sort((a, b) => a.data.ord
     const messages = root.querySelector('.about-bot__messages');
     const publicBio = bio.replace(/^I'm /, 'Joyal is ').replace(/ I build /g, ' Joyal builds ').replace(/ I care /g, ' Joyal cares ');
     const answer = (question) => {
-      const q = question.toLowerCase();
+      const q = new String(question.toLowerCase());
+      q.includes = (term) => {
+        const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return new RegExp(`\\b${escaped}\\b`, 'i').test(q.toString());
+      };
+      if (/\b(budget|price|pricing|cost|charge|salary|rate|quote)\b/.test(q)) return `Joyal does not have a fixed public price list. The cost depends on the website or application scope, features, timeline, and support needed. <a href="/contact/">Contact Joyal</a> with the requirements to discuss an estimate.`;
+      if (/\bdashboard\b/.test(q) && (q.includes('could') || q.includes('what') || q.includes('build'))) return 'I can help with a detailed AI answer about the dashboard Joyal could build.';
       if (q.includes('instagram') || q.includes('insta') || q.includes('ig')) return instagramUrl ? `Joyal's Instagram: <a href="${instagramUrl}" target="_blank" rel="noreferrer">${instagramUrl}</a>` : 'Joyal has not added an Instagram link yet.';
       if (q.includes('linkedin')) return linkedinUrl ? `Joyal's LinkedIn: <a href="${linkedinUrl}" target="_blank" rel="noreferrer">${linkedinUrl}</a>` : 'Joyal has not added a LinkedIn link yet.';
       if (q.includes('github') || q.includes('git hub')) return githubUrl ? `Joyal's GitHub: <a href="${githubUrl}" target="_blank" rel="noreferrer">${githubUrl}</a>` : 'Joyal has not added a GitHub link yet.';
@@ -108,7 +114,7 @@ const experience = (await getCollection('experience')).sort((a, b) => a.data.ord
       if (q.includes('experience') || q.includes('company') || q.includes('companies') || q.includes('worked') || q.includes('employment') || q.includes('career')) return `Joyal's work experience:<br><br>${experience.map((item) => `<strong>${item.role}</strong> — ${item.place}<br><small>${item.year}</small><br>${item.desc}`).join('<br><br>')}`;
       if (q.includes('hire') || q.includes('freelance') || q.includes('available') || q.includes('service')) return `Joyal can help with custom websites, ERP systems, dashboards, APIs, and full-stack application development. Tell him what you are building on the <a href="/contact/">contact page</a>, or <a href="https://wa.me/971568450406" target="_blank" rel="noreferrer">message him on WhatsApp</a>.`;
       if (q.includes('recruiter') || q.includes('job') || q.includes('candidate') || q.includes('experience')) return `Joyal is a full-stack software developer based in Sharjah, UAE. His strongest technologies are React, Next.js, TypeScript, NestJS, PostgreSQL, Prisma, and Docker. He develops multi-branch ERP software and previously built enterprise applications at Reon Technologies. <a href="${resume}" download>Download his resume</a> or <a href="/contact/">contact him</a>.`;
-      if (q.includes('case stud') || q.includes('portfolio') || q.includes('show me')) return `Explore Joyal's <a href="/case-studies/">case studies</a> and <a href="/projects/">projects</a> to see his work and outcomes.`;
+      if (q.includes('case study') || q.includes('portfolio') || q.includes('show me')) return `Explore Joyal's <a href="/case-studies/">case studies</a> and <a href="/projects/">projects</a> to see his work and outcomes.`;
       if (q.includes('blog') || q.includes('article')) return `Read Joyal's practical software development articles on his <a href="/blogs/">blog</a>.`;
       if (q.includes('phone') || q.includes('mobile') || q.includes('number') || q.includes('call')) return `Joyal's phone number is <a href="${phoneUrl}">${phone}</a>.`;
       if (q.includes('contact') || q.includes('email') || q.includes('hire')) return `You can reach Joyal at <a href="mailto:${email}">${email}</a>, or use the contact page.`;
@@ -123,10 +129,10 @@ const experience = (await getCollection('experience')).sort((a, b) => a.data.ord
       if (q.includes('personality') || q.includes('character') || q.includes('kind of person')) return personal.personality;
       if (q.includes('favorite place') || q.includes('favourite place') || q.includes('dream place')) return `Joyal's favorite place would be ${personal.favoritePlace}`;
       if (q.includes('car') || q.includes('vehicle')) return `Joyal's favorite car is the ${personal.favoriteCar}`;
-      if (q.includes('food') || q.includes('dish') || q.includes('eat')) return `Joyal's favorite food is ${personal.favoriteFood}`;
+      if (/\b(food|dish|eat|eats)\b/.test(q)) return `Joyal's favorite food is ${personal.favoriteFood}`;
       if (q.includes('college') || q.includes('university') || q.includes('degree') || q.includes('bachelor') || q.includes('study') || q.includes('education')) return `Joyal studied ${education.degree.role} at ${education.degree.place} from ${education.degree.year}. He also completed ${education.fullStack.role} at ${education.fullStack.place} and ${education.higherSecondary.role} at ${education.higherSecondary.place}.`;
       if (q.includes('place') || q.includes('live') || q.includes('based') || q.includes('location')) return 'Joyal is based in Sharjah, United Arab Emirates.';
-      if (q.includes('skill') || q.includes('tech') || q.includes('stack')) return 'Joyal works across the full stack with React, Next.js, TypeScript, NestJS, PostgreSQL, and modern web tooling.';
+      if (/\b(skills?|tech|technology|technologies|stack)\b/.test(q)) return 'Joyal works across the full stack with React, Next.js, TypeScript, NestJS, PostgreSQL, and modern web tooling.';
       if (q.includes('project') || q.includes('build') || q.includes('work')) return 'He builds practical business software, including multi-branch ERP systems, equipment-rental tools, APIs, and responsive web applications.';
       if (q.includes('who') || q.includes('about') || q.includes('location') || q.includes('where')) return publicBio;
       if (q.includes('resume') || q.includes('cv')) return `You can <a href="${resume}" download>download Joyal's resume</a>.`;
@@ -164,7 +170,7 @@ const experience = (await getCollection('experience')).sort((a, b) => a.data.ord
       promptBox.innerHTML = '';
       matches.slice(0, 3).forEach((text) => { const button = document.createElement('button'); button.type = 'button'; button.dataset.question = text; button.textContent = text; button.addEventListener('click', () => ask(text)); promptBox.append(button); });
     };
-    const ask = async (question) => { if (!question.trim()) return; root.querySelector('.about-bot__prompts').innerHTML = ''; addMessage(question, 'user'); const localAnswer = answer(question); if (!localAnswer.startsWith('I can help with')) return window.setTimeout(() => addMessage(localAnswer, 'bot'), 220); addMessage('Thinking…', 'bot'); try { const result = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question }) }); const data = await result.json(); messages.lastElementChild.textContent = result.ok ? data.answer : `AI error: ${data.error || 'Please try again.'}`; } catch { messages.lastElementChild.textContent = 'I could not reach the AI assistant right now. Please try again.'; } };
+    const ask = async (question) => { if (!question.trim()) return; root.querySelector('.about-bot__prompts').innerHTML = ''; addMessage(question, 'user'); const localAnswer = answer(question); const needsAi = localAnswer.includes('assistant can help') || localAnswer.startsWith('I can help with'); if (!needsAi) return window.setTimeout(() => addMessage(localAnswer, 'bot'), 220); addMessage('Thinking…', 'bot'); try { const result = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question }) }); const data = await result.json(); messages.lastElementChild.textContent = result.ok ? data.answer : `AI error: ${data.error || 'Please try again.'}`; } catch { messages.lastElementChild.textContent = 'I could not reach the AI assistant right now. Please try again.'; } };
     const open = () => { panel.hidden = false; launcher.setAttribute('aria-expanded', 'true'); window.setTimeout(() => input.focus(), 50); };
     launcher.addEventListener('click', open);
     close.addEventListener('click', () => { panel.hidden = true; launcher.setAttribute('aria-expanded', 'false'); launcher.focus(); });
