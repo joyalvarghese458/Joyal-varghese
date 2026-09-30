@@ -10,7 +10,17 @@ const contact = profile.contacts.find((item) => item.sub === 'email');
 
 <aside class="about-bot" data-about-bot aria-label="Ask about Joyal">
   <button class="about-bot__launcher" type="button" aria-label="Open About Me chat" aria-expanded="false" aria-controls="about-bot-panel">
-    <span class="about-bot__robot" aria-hidden="true">🤖</span>
+    <span class="about-bot__robot" aria-hidden="true">
+      <svg viewBox="0 0 48 48" role="presentation" focusable="false">
+        <rect x="8" y="13" width="32" height="27" rx="7" fill="#bcdfff" stroke="#1a1a1a" stroke-width="2" />
+        <path d="M24 13V8" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" />
+        <circle cx="24" cy="6" r="2.5" fill="#f2a7c4" stroke="#1a1a1a" stroke-width="1.5" />
+        <circle cx="18" cy="25" r="3" fill="#1a1a1a" />
+        <circle cx="30" cy="25" r="3" fill="#1a1a1a" />
+        <path d="M17 33c4 3 10 3 14 0" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" />
+        <path d="M8 22H5M43 22h-3" stroke="#f2a7c4" stroke-width="2" stroke-linecap="round" />
+      </svg>
+    </span>
   </button>
 
   <section class="about-bot__panel" id="about-bot-panel" hidden>

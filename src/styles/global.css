@@ -66,7 +66,8 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: rgba(255,228,9
 .about-bot { position: fixed; right: 24px; bottom: 24px; z-index: 20; font-family: 'JetBrains Mono', monospace; }
 .about-bot__launcher { display: flex; align-items: center; justify-content: center; width: 58px; height: 58px; border: 0; border-radius: 0; background: transparent; padding: 0; box-shadow: none; cursor: pointer; }
 .about-bot__launcher:hover { transform: translateY(-2px); }
-.about-bot__robot { display: inline-block; font-size: 36px; line-height: 1; transform-origin: 50% 85%; animation: aboutBotRobot 1.35s ease-in-out infinite; }
+.about-bot__robot { display: inline-block; width: 42px; height: 42px; line-height: 1; transform-origin: 50% 85%; animation: aboutBotRobot 1.35s ease-in-out infinite; }
+.about-bot__robot svg { display: block; width: 100%; height: 100%; }
 @keyframes aboutBotRobot { 0%, 100% { transform: translateY(0) rotate(-5deg); } 35% { transform: translateY(-8px) rotate(5deg); } 55% { transform: translateY(-2px) rotate(0); } }
 .about-bot__panel { position: absolute; right: 0; bottom: 58px; width: min(360px, calc(100vw - 32px)); overflow: hidden; border: 2px solid var(--ink, #1a1a1a); background: #fbfaf5; box-shadow: 7px 7px 0 var(--ink, #1a1a1a); }
 .about-bot__head { display: flex; justify-content: space-between; padding: 17px 18px 14px; border-bottom: 2px solid var(--ink, #1a1a1a); background: #f2a7c4; }
