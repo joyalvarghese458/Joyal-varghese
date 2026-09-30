@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import profile from '../content/profile/main.json';
 import fullStack from '../content/education/01-full-stack.json';
 import degree from '../content/education/02-computer-science.json';
@@ -6,6 +7,11 @@ import higherSecondary from '../content/education/03-higher-secondary.json';
 import botProfile from '../data/bot-profile.json';
 
 const contact = profile.contacts.find((item) => item.sub === 'email');
+const phoneContact = profile.contacts.find((item) => item.sub === 'phone');
+const instagramContact = profile.contacts.find((item) => item.sub === 'instagram');
+const linkedinContact = profile.contacts.find((item) => item.sub === 'linkedin');
+const githubContact = profile.contacts.find((item) => item.sub === 'github');
+const experience = (await getCollection('experience')).sort((a, b) => a.data.order - b.data.order).map(({ data }) => data);
 ---
 
 <aside class="about-bot" data-about-bot aria-label="Ask about Joyal">
@@ -65,6 +71,12 @@ const contact = profile.contacts.find((item) => item.sub === 'email');
     <div class="about-bot__prompts" aria-label="Suggested questions">
       <button type="button" data-question="Who is Joyal?">Who is Joyal?</button>
       <button type="button" data-question="What does Joyal build?">What does he build?</button>
+      <button type="button" data-question="I want to hire Joyal">Hire Joyal</button>
+      <button type="button" data-question="Recruiter summary">Recruiter summary</button>
+      <button type="button" data-question="What is Joyal's work experience?">Work experience</button>
+      <button type="button" data-question="What is Joyal's Instagram?">Instagram</button>
+      <button type="button" data-question="What is Joyal's LinkedIn?">LinkedIn</button>
+      <button type="button" data-question="What is Joyal's GitHub?">GitHub</button>
       <button type="button" data-question="How can I contact Joyal?">Contact details</button>
     </div>
     <form class="about-bot__form">
@@ -75,7 +87,7 @@ const contact = profile.contacts.find((item) => item.sub === 'email');
   </section>
 </aside>
 
-<script define:vars={{ bio: profile.bio, email: contact?.label ?? '', phone: profile.contacts.find((item) => item.sub === 'phone')?.label ?? '', resume: '/Joyal_Varghese_Resume.pdf', education: { fullStack, degree, higherSecondary }, personal: botProfile }}>
+<script define:vars={{ bio: profile.bio, email: contact?.label ?? '', phone: phoneContact?.label ?? '', phoneUrl: phoneContact?.url ?? '', instagramUrl: instagramContact?.url ?? '', linkedinUrl: linkedinContact?.url ?? '', githubUrl: githubContact?.url ?? '', resume: '/Joyal_Varghese_Resume.pdf', education: { fullStack, degree, higherSecondary }, experience, personal: botProfile }}>
   const root = document.querySelector('[data-about-bot]');
   if (root && !root.dataset.ready) {
     root.dataset.ready = 'true';
@@ -87,7 +99,15 @@ const contact = profile.contacts.find((item) => item.sub === 'email');
     const messages = root.querySelector('.about-bot__messages');
     const answer = (question) => {
       const q = question.toLowerCase();
-      if (q.includes('phone') || q.includes('mobile') || q.includes('number') || q.includes('call')) return `Joyal's phone number is <a href="tel:${phone.replace(/\s/g, '')}">${phone}</a>.`;
+      if (q.includes('instagram') || q.includes('insta') || q.includes('ig')) return instagramUrl ? `Joyal's Instagram: <a href="${instagramUrl}" target="_blank" rel="noreferrer">${instagramUrl}</a>` : 'Joyal has not added an Instagram link yet.';
+      if (q.includes('linkedin')) return linkedinUrl ? `Joyal's LinkedIn: <a href="${linkedinUrl}" target="_blank" rel="noreferrer">${linkedinUrl}</a>` : 'Joyal has not added a LinkedIn link yet.';
+      if (q.includes('github') || q.includes('git hub')) return githubUrl ? `Joyal's GitHub: <a href="${githubUrl}" target="_blank" rel="noreferrer">${githubUrl}</a>` : 'Joyal has not added a GitHub link yet.';
+      if (q.includes('experience') || q.includes('company') || q.includes('companies') || q.includes('worked') || q.includes('employment') || q.includes('career')) return `Joyal's work experience:<br><br>${experience.map((item) => `<strong>${item.role}</strong> — ${item.place}<br><small>${item.year}</small><br>${item.desc}`).join('<br><br>')}`;
+      if (q.includes('hire') || q.includes('freelance') || q.includes('available') || q.includes('service')) return `Joyal can help with custom websites, ERP systems, dashboards, APIs, and full-stack application development. Tell him what you are building on the <a href="/contact/">contact page</a>, or <a href="https://wa.me/971568450406" target="_blank" rel="noreferrer">message him on WhatsApp</a>.`;
+      if (q.includes('recruiter') || q.includes('job') || q.includes('candidate') || q.includes('experience')) return `Joyal is a full-stack software developer based in Sharjah, UAE. His strongest technologies are React, Next.js, TypeScript, NestJS, PostgreSQL, Prisma, and Docker. He develops multi-branch ERP software and previously built enterprise applications at Reon Technologies. <a href="${resume}" download>Download his resume</a> or <a href="/contact/">contact him</a>.`;
+      if (q.includes('case stud') || q.includes('portfolio') || q.includes('show me')) return `Explore Joyal's <a href="/case-studies/">case studies</a> and <a href="/projects/">projects</a> to see his work and outcomes.`;
+      if (q.includes('blog') || q.includes('article')) return `Read Joyal's practical software development articles on his <a href="/blogs/">blog</a>.`;
+      if (q.includes('phone') || q.includes('mobile') || q.includes('number') || q.includes('call')) return `Joyal's phone number is <a href="${phoneUrl}">${phone}</a>.`;
       if (q.includes('contact') || q.includes('email') || q.includes('hire')) return `You can reach Joyal at <a href="mailto:${email}">${email}</a>, or use the contact page.`;
       if (q.includes('father') || q.includes('dad')) return `Joyal's father's name is ${personal.family.father} 👨.`;
       if (q.includes('mother') || q.includes('mom') || q.includes('mum')) return `Joyal's mother's name is ${personal.family.mother} 👩.`;
