@@ -1,0 +1,109 @@
+---
+import profile from '../content/profile/main.json';
+import fullStack from '../content/education/01-full-stack.json';
+import degree from '../content/education/02-computer-science.json';
+import higherSecondary from '../content/education/03-higher-secondary.json';
+import botProfile from '../data/bot-profile.json';
+
+const contact = profile.contacts.find((item) => item.sub === 'email');
+---
+
+<aside class="about-bot" data-about-bot aria-label="Ask about Joyal">
+  <button class="about-bot__launcher" type="button" aria-label="Open About Me chat" aria-expanded="false" aria-controls="about-bot-panel">
+    <span class="about-bot__robot" aria-hidden="true">🤖</span>
+  </button>
+
+  <section class="about-bot__panel" id="about-bot-panel" hidden>
+    <div class="about-bot__head">
+      <div>
+        <p class="about-bot__eyebrow">Joyal's little helper</p>
+        <h2>Ask me anything</h2>
+      </div>
+      <button class="about-bot__close" type="button" aria-label="Close chat">×</button>
+    </div>
+    <div class="about-bot__messages" aria-live="polite">
+      <div class="about-bot__message about-bot__message--bot">Hi! I can tell you about Joyal's work, skills, projects, or how to get in touch.</div>
+    </div>
+    <div class="about-bot__prompts" aria-label="Suggested questions">
+      <button type="button" data-question="Who is Joyal?">Who is Joyal?</button>
+      <button type="button" data-question="What does Joyal build?">What does he build?</button>
+      <button type="button" data-question="How can I contact Joyal?">Contact details</button>
+    </div>
+    <form class="about-bot__form">
+      <label class="sr-only" for="about-bot-input">Ask a question about Joyal</label>
+      <input id="about-bot-input" name="question" autocomplete="off" placeholder="Ask a question about Joyal" />
+      <button type="submit" aria-label="Send question">↗</button>
+    </form>
+  </section>
+</aside>
+
+<script define:vars={{ bio: profile.bio, email: contact?.label ?? '', phone: profile.contacts.find((item) => item.sub === 'phone')?.label ?? '', resume: '/Joyal_Varghese_Resume.pdf', education: { fullStack, degree, higherSecondary }, personal: botProfile }}>
+  const root = document.querySelector('[data-about-bot]');
+  if (root && !root.dataset.ready) {
+    root.dataset.ready = 'true';
+    const launcher = root.querySelector('.about-bot__launcher');
+    const panel = root.querySelector('.about-bot__panel');
+    const close = root.querySelector('.about-bot__close');
+    const form = root.querySelector('.about-bot__form');
+    const input = root.querySelector('input');
+    const messages = root.querySelector('.about-bot__messages');
+    const answer = (question) => {
+      const q = question.toLowerCase();
+      if (q.includes('phone') || q.includes('mobile') || q.includes('number') || q.includes('call')) return `Joyal's phone number is <a href="tel:${phone.replace(/\s/g, '')}">${phone}</a>.`;
+      if (q.includes('contact') || q.includes('email') || q.includes('hire')) return `You can reach Joyal at <a href="mailto:${email}">${email}</a>, or use the contact page.`;
+      if (q.includes('father') || q.includes('dad')) return `Joyal's father's name is ${personal.family.father} 👨.`;
+      if (q.includes('mother') || q.includes('mom') || q.includes('mum')) return `Joyal's mother's name is ${personal.family.mother} 👩.`;
+      if (q.includes('sister')) return `Joyal's sister is ${personal.family.sister} 👧.`;
+      if (q.includes('girlfriend') || q.includes('relationship')) return personal.family.girlfriend;
+      if (q.includes('family') || q.includes('parents') || q.includes('home')) return `${personal.background} His family includes his father, ${personal.family.father}; mother, ${personal.family.mother}; and sister, ${personal.family.sister}. Girlfriend status: ${personal.family.girlfriend}`;
+      if (q.includes('age') || q.includes('old') || q.includes('birthday') || q.includes('born')) return `Joyal was born on ${personal.dateOfBirth} 🎂. He is ${new Date().getFullYear() - 2001 - (new Date() < new Date(`${new Date().getFullYear()}-08-23`) ? 1 : 0)} years old.`;
+      if (q.includes('hobby') || q.includes('hobbies') || q.includes('interest') || q.includes('free time')) return `Joyal enjoys ${personal.hobbies.join(' and ')}.`;
+      if (q.includes('language') || q.includes('speak')) return `Joyal speaks ${personal.languages.join(' and ')} 🗣️.`;
+      if (q.includes('personality') || q.includes('character') || q.includes('kind of person')) return personal.personality;
+      if (q.includes('favorite place') || q.includes('favourite place') || q.includes('dream place')) return `Joyal's favorite place would be ${personal.favoritePlace}`;
+      if (q.includes('car') || q.includes('vehicle')) return `Joyal's favorite car is the ${personal.favoriteCar}`;
+      if (q.includes('food') || q.includes('dish') || q.includes('eat')) return `Joyal's favorite food is ${personal.favoriteFood}`;
+      if (q.includes('college') || q.includes('university') || q.includes('degree') || q.includes('bachelor') || q.includes('study') || q.includes('education')) return `Joyal studied ${education.degree.role} at ${education.degree.place} from ${education.degree.year}. He also completed ${education.fullStack.role} at ${education.fullStack.place} and ${education.higherSecondary.role} at ${education.higherSecondary.place}.`;
+      if (q.includes('place') || q.includes('live') || q.includes('based') || q.includes('location')) return 'Joyal is based in Sharjah, United Arab Emirates.';
+      if (q.includes('skill') || q.includes('tech') || q.includes('stack')) return 'Joyal works across the full stack with React, Next.js, TypeScript, NestJS, PostgreSQL, and modern web tooling.';
+      if (q.includes('project') || q.includes('build') || q.includes('work')) return 'He builds practical business software, including multi-branch ERP systems, equipment-rental tools, APIs, and responsive web applications.';
+      if (q.includes('who') || q.includes('about') || q.includes('location') || q.includes('where')) return bio;
+      if (q.includes('resume') || q.includes('cv')) return `You can <a href="${resume}" download>download Joyal's resume</a>.`;
+      return 'I can help with Joyal’s background, skills, projects, location, resume, or contact details. Try asking one of those.';
+    };
+    const addMessage = (text, type) => {
+      const item = document.createElement('div');
+      item.className = `about-bot__message about-bot__message--${type}`;
+      item.innerHTML = text;
+      messages.append(item);
+      messages.scrollTop = messages.scrollHeight;
+    };
+    const related = [
+      ['phone|mobile|number|call', 'What is Joyal’s phone number?'],
+      ['place|live|based|location', 'Where is Joyal based?'],
+      ['hobby|interest|free time', 'What are Joyal’s hobbies?'],
+      ['age|old|birthday', 'How old is Joyal?'],
+      ['father|dad', 'What is Joyal’s father’s name?'],
+      ['family|parents|home', 'Tell me about Joyal’s family.'],
+      ['college|university|degree|study|education', 'Which college and degree did Joyal complete?'],
+      ['language|speak', 'Which languages does Joyal speak?'],
+      ['personality|character', 'What is Joyal’s personality like?'],
+      ['car|vehicle', 'What is Joyal’s favorite car?'],
+      ['food|dish|eat', 'What is Joyal’s favorite food?'],
+      ['skill|tech|stack', 'What are Joyal’s skills?'],
+    ];
+    const updateRelated = (value) => {
+      const promptBox = root.querySelector('.about-bot__prompts');
+      const matches = related.filter(([words]) => new RegExp(words, 'i').test(value)).map(([, text]) => text);
+      promptBox.innerHTML = '';
+      matches.slice(0, 3).forEach((text) => { const button = document.createElement('button'); button.type = 'button'; button.dataset.question = text; button.textContent = text; button.addEventListener('click', () => ask(text)); promptBox.append(button); });
+    };
+    const ask = (question) => { if (!question.trim()) return; addMessage(question, 'user'); window.setTimeout(() => addMessage(answer(question), 'bot'), 220); };
+    const open = () => { panel.hidden = false; launcher.setAttribute('aria-expanded', 'true'); window.setTimeout(() => input.focus(), 50); };
+    launcher.addEventListener('click', open);
+    close.addEventListener('click', () => { panel.hidden = true; launcher.setAttribute('aria-expanded', 'false'); launcher.focus(); });
+    form.addEventListener('submit', (event) => { event.preventDefault(); ask(input.value); input.value = ''; });
+    input.addEventListener('input', () => updateRelated(input.value));
+    root.querySelectorAll('[data-question]').forEach((button) => button.addEventListener('click', () => ask(button.dataset.question || '')));
+  }
+</script>

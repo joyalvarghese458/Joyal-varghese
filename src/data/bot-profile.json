@@ -1,0 +1,16 @@
+{
+  "dateOfBirth": "23 August 2001",
+  "hobbies": ["Driving 🚗", "Listening to songs 🎶"],
+  "family": {
+    "father": "Varghese K K",
+    "mother": "Mini Varghese",
+    "sister": "Mariya Varghese",
+    "girlfriend": "It’s a surprise 🤫"
+  },
+  "background": "Joyal is from a middle-class family in Kerala, India, and currently works as a software developer in Sharjah, UAE.",
+  "languages": ["English", "Malayalam"],
+  "personality": "Joyal is a cool, trustworthy, and easy-going person 😎",
+  "favoritePlace": "A peaceful place with lots of trees, a small river, birds, and butterflies 🌳🌿🐦🦋",
+  "favoriteCar": "Toyota Land Cruiser 🚙",
+  "favoriteFood": "Honey Alfarm Mandi 🍗🍚"
+}
